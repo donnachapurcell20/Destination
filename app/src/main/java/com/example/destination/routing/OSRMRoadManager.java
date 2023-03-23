@@ -3,9 +3,10 @@ package com.example.destination.routing;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.osmtesting.R;
-import com.example.osmtesting.utils.BonusPackHelper;
-import com.example.osmtesting.utils.PolylineEncoder;
+
+import com.example.destination.utils.BonusPackHelper;
+import com.example.destination.utils.PolylineEncoder;
+import com.example.destination.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
