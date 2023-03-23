@@ -37,7 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
 
     private MapView mapView;
     private EditText startEditText;
@@ -110,69 +111,35 @@ public class MainActivity extends AppCompatActivity {
                     Marker nodeMarker = new Marker(mapView);
                     nodeMarker.setPosition(node.mLocation);
 
-                    // Determine the direction of the nodeIcon
-                    int direction = 0; // 0 for straight, 1 for left, 2 for right
-                    if (i < road.mNodes.size() - 1) {
-                        RoadNode nextNode = road.mNodes.get(i + 1);
-                        float bearing1 = (float) node.mLocation.bearingTo(nextNode.mLocation);
-                        float bearing2 = mapView.getMapOrientation() + 360f;
-                        float angle = bearing1 - bearing2;
-                        if (angle < 0) {
-                            angle += 360;
-                        }
-                        if (angle > 180) {
-                            direction = 2;
-                        } else if (angle > 0) {
-                            direction = 1;
-                        }
-                    }
-
-                    // Set the nodeIcon based on the direction
-                    switch (direction) {
-                        case "left":
-                            nodeIcon = getResources().getDrawable(R.drawable.ic_left);
-                            break;
-                        case "right":
-                            nodeIcon = getResources().getDrawable(R.drawable.ic_right);
-                            break;
-                        case "straight":
-                            nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
-                            break;
-                        default:
-                            nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
-                    }
-
-// Add markers for each step of the route
-                    for (int i = 0; i < road.mNodes.size(); i++) {
-                        RoadNode node = road.mNodes.get(i);
+                    // switch statement to set the appropriate drawable for each node
+                    // Add markers for each step of the route
+                    for (int j = 0; j < road.mNodes.size(); j++) {
+                        RoadNode node = road.mNodes.get(j);
                         Marker nodeMarker = new Marker(mapView);
                         nodeMarker.setPosition(node.mLocation);
-                        nodeMarker.setTitle("Step " + i);
-                        nodeMarker.setSnippet(node.mInstructions);
-                        nodeMarker.setSubDescription(Road.getLengthDurationText(MainActivity.this, node.mLength, node.mDuration));
-                        // Set the appropriate icon for the node based on the direction
-                        String direction = node.mManeuverType;
-                        switch (direction) {
-                            case "left":
-                                nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_left));
-                                break;
-                            case "right":
-                                nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_right));
-                                break;
-                            case "straight":
-                                nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
-                                break;
-                            default:
-                                nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
+                        nodeMarker.setIcon(nodeIcon);
+                        nodeMarker.setTitle("Step " + j);
+                        if (node.mManeuverType == RoadNode.MANEUVER_LEFT) {
+                            nodeMarker.setSnippet("Turn left: " + node.mInstructions);
+                        } else if (node.mManeuverType == RoadNode.MANEUVER_RIGHT) {
+                            nodeMarker.setSnippet("Turn right: " + node.mInstructions);
+                        } else {
+                            nodeMarker.setSnippet(node.mInstructions);
                         }
+                        nodeMarker.setSubDescription(Road.getLengthDurationText(MainActivity.this, node.mLength, node.mDuration));
                         mapView.getOverlays().add(nodeMarker);
                     }
+
+
+
+                    nodeMarker.setTitle("Step " + i);
+                    nodeMarker.setSnippet(node.mInstructions);
+                    nodeMarker.setSubDescription(Road.getLengthDurationText(MainActivity.this, node.mLength, node.mDuration));
+                    mapView.getOverlays().add(nodeMarker);
                 }
             }
         }
     }
-
-}
 
 
 
