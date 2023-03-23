@@ -5,8 +5,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.example.osmtesting.R;
-import com.example.osmtesting.utils.BonusPackHelper;
+
+import com.example.destination.R;
+import com.example.destination.utils.BonusPackHelper;
 
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
