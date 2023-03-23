@@ -4,6 +4,7 @@ package com.example.destination;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -17,6 +18,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.destination.routing.OSRMRoadManager;
@@ -37,12 +40,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity
+{
     private MapView mapView;
     private EditText startEditText;
     private EditText endEditText;
     private Drawable nodeIcon;
+    private Button openCloseButton;
+    private Button submitButton;
+
 
 
     private class SearchTask extends AsyncTask<String, Void, Road> {
@@ -152,10 +158,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 
         // Initialize views
@@ -172,25 +179,6 @@ public class MainActivity extends AppCompatActivity {
         GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
         mapController.setCenter(startPoint);
 
-        Button expandCollapseButton = findViewById(R.id.expand_collapse_button);
-        LinearLayout searchPanel = findViewById(R.id.search_panel);
-
-        expandCollapseButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                if (searchPanel.getVisibility() == View.GONE) {
-                    searchPanel.setVisibility(View.VISIBLE);
-                    expandCollapseButton.setText("+");
-                } else {
-                    searchPanel.setVisibility(View.GONE);
-                    expandCollapseButton.setText("-");
-                }
-            }
-        });
-
-
-
         Button searchButton = findViewById(R.id.search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,6 +188,27 @@ public class MainActivity extends AppCompatActivity {
                 new SearchTask().execute(startLocation, endLocation);
             }
         });
+
+        Button submitButton = findViewById(R.id.submit_button);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Show dialog to indicate marker has been added
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Marker added");
+                builder.setMessage("Your marker has been added successfully.");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Navigate to map activity
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                builder.show();
+            }
+        });
+
 
     }
     @Override
