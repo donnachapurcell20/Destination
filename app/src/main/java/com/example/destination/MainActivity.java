@@ -195,10 +195,10 @@ public class MainActivity extends AppCompatActivity
 
         mapView.getOverlays().add(marker);
 
-        mapView.setOnLongClickListener(new MapView.OnLongClickListener() {
+        mapView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View v, GeoPoint point) {
-                // Retrieve latitude and longitude values from GeoPoint
+            public boolean onLongClick(View v) {
+                GeoPoint point = (GeoPoint) mapView.getProjection().fromPixels((int) v.getX(), (int) v.getY());
                 double latitude = point.getLatitude();
                 double longitude = point.getLongitude();
 
@@ -208,14 +208,12 @@ public class MainActivity extends AppCompatActivity
                 latEditText.setText(String.valueOf(latitude));
                 lonEditText.setText(String.valueOf(longitude));
 
-                // Launch your XML form activity here
+                // Launch  XML form activity here
                 Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
                 startActivity(intent);
                 return true;
             }
         });
-
-
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Add a marker here?");
