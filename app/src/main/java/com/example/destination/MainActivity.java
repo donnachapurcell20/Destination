@@ -5,6 +5,7 @@ package com.example.destination;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -193,14 +195,26 @@ public class MainActivity extends AppCompatActivity
 
         mapView.getOverlays().add(marker);
 
-        mapView.setOnMapLongClickListener(new MapView.OnMapLongClickListener() {
+        mapView.setOnLongClickListener(new MapView.OnLongClickListener() {
             @Override
-            public boolean onMapLongClick(final GeoPoint tapLocation) {
-                marker.setPosition(tapLocation);
-                alertDialog.show();
+            public boolean onLongClick(View v, GeoPoint point) {
+                // Retrieve latitude and longitude values from GeoPoint
+                double latitude = point.getLatitude();
+                double longitude = point.getLongitude();
+
+                // Set the text of the form fields with latitude and longitude values
+                TextView latEditText = findViewById(R.id.latitude);
+                TextView lonEditText = findViewById(R.id.longitude);
+                latEditText.setText(String.valueOf(latitude));
+                lonEditText.setText(String.valueOf(longitude));
+
+                // Launch your XML form activity here
+                Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
+                startActivity(intent);
                 return true;
             }
         });
+
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
