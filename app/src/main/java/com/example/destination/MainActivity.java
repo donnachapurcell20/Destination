@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
         //This might be my problem for the image just showing the straight arrow change this later!!
-//        nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
+        nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
 
         // Set the default location to London
         IMapController mapController = mapView.getController();
@@ -193,17 +193,15 @@ public class MainActivity extends AppCompatActivity
 
         mapView.getOverlays().add(marker);
 
-        mapView.setOnTouchListener(new View.OnTouchListener() {
+        mapView.setOnMapLongClickListener(new MapView.OnMapLongClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    GeoPoint tapLocation = (GeoPoint) mapView.getProjection().fromPixels((int) event.getX(), (int) event.getY());
-                    marker.setPosition(tapLocation);
-                    alertDialog.show();
-                }
-                return false;
+            public boolean onMapLongClick(final GeoPoint tapLocation) {
+                marker.setPosition(tapLocation);
+                alertDialog.show();
+                return true;
             }
         });
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Add a marker here?");
@@ -233,11 +231,6 @@ public class MainActivity extends AppCompatActivity
                 String startLocation = startEditText.getText().toString();
                 String endLocation = endEditText.getText().toString();
                 new SearchTask().execute(startLocation, endLocation);
-
-                // Hide the keyboard
-                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
             }
         });
     }
