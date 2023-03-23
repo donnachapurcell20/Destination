@@ -37,8 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity
-{
+public class MainActivity extends AppCompatActivity {
 
     private MapView mapView;
     private EditText startEditText;
@@ -111,26 +110,36 @@ public class MainActivity extends AppCompatActivity
                     Marker nodeMarker = new Marker(mapView);
                     nodeMarker.setPosition(node.mLocation);
 
-                    // switch statement to set the appropriate drawable for each node
-                    // Add markers for each step of the route
-                    for (int j = 0; j < road.mNodes.size(); j++) {
-                        RoadNode node = road.mNodes.get(j);
-                        Marker nodeMarker = new Marker(mapView);
-                        nodeMarker.setPosition(node.mLocation);
-                        nodeMarker.setIcon(nodeIcon);
-                        nodeMarker.setTitle("Step " + j);
-                        if (node.mManeuverType == RoadNode.MANEUVER_LEFT) {
-                            nodeMarker.setSnippet("Turn left: " + node.mInstructions);
-                        } else if (node.mManeuverType == RoadNode.MANEUVER_RIGHT) {
-                            nodeMarker.setSnippet("Turn right: " + node.mInstructions);
-                        } else {
-                            nodeMarker.setSnippet(node.mInstructions);
-                        }
-                        nodeMarker.setSubDescription(Road.getLengthDurationText(MainActivity.this, node.mLength, node.mDuration));
-                        mapView.getOverlays().add(nodeMarker);
+                    // Set the icon according to the maneuver
+                    switch (node.mManeuverType) {
+                        case RoadNode.MANEUVER_LEFT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
+                            break;
+                        case RoadNode.MANEUVER_RIGHT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
+                            break;
+                        case RoadNode.MANEUVER_ROUNDABOUT:
+                            // Use a different drawable for each roundabout exit
+                            int exitNumber = node.mInstructions.indexOf("exit");
+                            if (exitNumber >= 0 && exitNumber < node.mInstructions.length() - 4) {
+                                char exitChar = node.mInstructions.charAt(exitNumber + 5);
+                                int exitCount = Character.getNumericValue(exitChar);
+                                if (exitCount > 0 && exitCount <= 4) {
+                                    String drawableName = "ic_roundabout_" + exitCount;
+                                    int drawableId = getResources().getIdentifier(drawableName, "drawable", getPackageName());
+                                    if (drawableId != 0) {
+                                        nodeMarker.setIcon(getResources().getDrawable(drawableId));
+                                        break;
+                                    }
+                                }
+                            }
+                            // Use the default roundabout drawable if the exit count cannot be determined
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_roundabout));
+                            break;
+                        default:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
+                            break;
                     }
-
-
 
                     nodeMarker.setTitle("Step " + i);
                     nodeMarker.setSnippet(node.mInstructions);
@@ -139,17 +148,14 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+
+
     }
 
-
-
-
-
-
-
-                    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
 
         // Initialize views
@@ -166,6 +172,25 @@ public class MainActivity extends AppCompatActivity
         GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
         mapController.setCenter(startPoint);
 
+        Button expandCollapseButton = findViewById(R.id.expand_collapse_button);
+        LinearLayout searchPanel = findViewById(R.id.search_panel);
+
+        expandCollapseButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                if (searchPanel.getVisibility() == View.GONE) {
+                    searchPanel.setVisibility(View.VISIBLE);
+                    expandCollapseButton.setText("+");
+                } else {
+                    searchPanel.setVisibility(View.GONE);
+                    expandCollapseButton.setText("-");
+                }
+            }
+        });
+
+
+
         Button searchButton = findViewById(R.id.search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,6 +200,7 @@ public class MainActivity extends AppCompatActivity
                 new SearchTask().execute(startLocation, endLocation);
             }
         });
+
     }
     @Override
     protected void onPause() {
