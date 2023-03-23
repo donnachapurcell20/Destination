@@ -7,6 +7,8 @@ import android.util.Log;
 
 //import com.example.destination.utils.BonusPackHelper;
 
+import com.example.destination.utils.BonusPackHelper;
+
 import java.util.ArrayList;
 
 
