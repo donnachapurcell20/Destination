@@ -3,6 +3,7 @@ package com.example.destination;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -22,6 +24,9 @@ import com.example.destination.routing.Road;
 import com.example.destination.routing.RoadManager;
 import com.example.destination.routing.RoadNode;
 
+import org.osmdroid.api.IMapController;
+import org.osmdroid.mapsforge.BuildConfig;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
@@ -38,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText startEditText;
     private EditText endEditText;
     private Drawable nodeIcon;
+    private Button openCloseButton;
 
 
     private class SearchTask extends AsyncTask<String, Void, Road> {
@@ -175,6 +181,22 @@ public class MainActivity extends AppCompatActivity {
                 new SearchTask().execute(startLocation, endLocation);
             }
         });
+
+//        Button openCloseButton = findViewById(R.id.expand_collapse_button);
+//        openCloseButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view)
+//            {
+//                Button button = (Button) view;
+//                String buttonText = button.getText().toString();
+//                if (buttonText.equals("+")) {
+//                    button.setText("-");
+//                } else {
+//                    button.setText("+");
+//                }
+//            }
+//        });
+
     }
     @Override
     protected void onPause() {
