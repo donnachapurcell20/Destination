@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText startEditText;
     private EditText endEditText;
     private Drawable nodeIcon;
-    private Button openCloseButton;
 
 
     private class SearchTask extends AsyncTask<String, Void, Road> {
@@ -111,49 +110,77 @@ public class MainActivity extends AppCompatActivity {
                     Marker nodeMarker = new Marker(mapView);
                     nodeMarker.setPosition(node.mLocation);
 
-                    // Set the icon according to the maneuver
-                    switch (node.mManeuverType) {
-                        case RoadNode.MANEUVER_LEFT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
-                            break;
-                        case RoadNode.MANEUVER_RIGHT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
-                            break;
-                        case RoadNode.MANEUVER_ROUNDABOUT:
-                            // Use a different drawable for each roundabout exit
-                            int exitNumber = node.mInstructions.indexOf("exit");
-                            if (exitNumber >= 0 && exitNumber < node.mInstructions.length() - 4) {
-                                char exitChar = node.mInstructions.charAt(exitNumber + 5);
-                                int exitCount = Character.getNumericValue(exitChar);
-                                if (exitCount > 0 && exitCount <= 4) {
-                                    String drawableName = "ic_roundabout_" + exitCount;
-                                    int drawableId = getResources().getIdentifier(drawableName, "drawable", getPackageName());
-                                    if (drawableId != 0) {
-                                        nodeMarker.setIcon(getResources().getDrawable(drawableId));
-                                        break;
-                                    }
-                                }
-                            }
-                            // Use the default roundabout drawable if the exit count cannot be determined
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_roundabout));
-                            break;
-                        default:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
-                            break;
+                    // Determine the direction of the nodeIcon
+                    int direction = 0; // 0 for straight, 1 for left, 2 for right
+                    if (i < road.mNodes.size() - 1) {
+                        RoadNode nextNode = road.mNodes.get(i + 1);
+                        float bearing1 = (float) node.mLocation.bearingTo(nextNode.mLocation);
+                        float bearing2 = mapView.getMapOrientation() + 360f;
+                        float angle = bearing1 - bearing2;
+                        if (angle < 0) {
+                            angle += 360;
+                        }
+                        if (angle > 180) {
+                            direction = 2;
+                        } else if (angle > 0) {
+                            direction = 1;
+                        }
                     }
 
-                    nodeMarker.setTitle("Step " + i);
-                    nodeMarker.setSnippet(node.mInstructions);
-                    nodeMarker.setSubDescription(Road.getLengthDurationText(MainActivity.this, node.mLength, node.mDuration));
-                    mapView.getOverlays().add(nodeMarker);
+                    // Set the nodeIcon based on the direction
+                    switch (direction) {
+                        case "left":
+                            nodeIcon = getResources().getDrawable(R.drawable.ic_left);
+                            break;
+                        case "right":
+                            nodeIcon = getResources().getDrawable(R.drawable.ic_right);
+                            break;
+                        case "straight":
+                            nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
+                            break;
+                        default:
+                            nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
+                    }
+
+// Add markers for each step of the route
+                    for (int i = 0; i < road.mNodes.size(); i++) {
+                        RoadNode node = road.mNodes.get(i);
+                        Marker nodeMarker = new Marker(mapView);
+                        nodeMarker.setPosition(node.mLocation);
+                        nodeMarker.setTitle("Step " + i);
+                        nodeMarker.setSnippet(node.mInstructions);
+                        nodeMarker.setSubDescription(Road.getLengthDurationText(MainActivity.this, node.mLength, node.mDuration));
+                        // Set the appropriate icon for the node based on the direction
+                        String direction = node.mManeuverType;
+                        switch (direction) {
+                            case "left":
+                                nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_left));
+                                break;
+                            case "right":
+                                nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_right));
+                                break;
+                            case "straight":
+                                nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
+                                break;
+                            default:
+                                nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
+                        }
+                        mapView.getOverlays().add(nodeMarker);
+                    }
                 }
             }
         }
-
-
     }
 
-    public void onCreate(Bundle savedInstanceState) {
+}
+
+
+
+
+
+
+
+                    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -181,22 +208,6 @@ public class MainActivity extends AppCompatActivity {
                 new SearchTask().execute(startLocation, endLocation);
             }
         });
-
-//        Button openCloseButton = findViewById(R.id.expand_collapse_button);
-//        openCloseButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view)
-//            {
-//                Button button = (Button) view;
-//                String buttonText = button.getText().toString();
-//                if (buttonText.equals("+")) {
-//                    button.setText("-");
-//                } else {
-//                    button.setText("+");
-//                }
-//            }
-//        });
-
     }
     @Override
     protected void onPause() {
