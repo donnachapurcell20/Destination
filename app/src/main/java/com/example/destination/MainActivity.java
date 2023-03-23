@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -14,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -30,6 +30,7 @@ import com.example.destination.routing.RoadManager;
 import com.example.destination.routing.RoadNode;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
 import org.osmdroid.mapsforge.BuildConfig;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -180,7 +181,7 @@ public class MainActivity extends AppCompatActivity
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
         //This might be my problem for the image just showing the straight arrow change this later!!
-        nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
+//        nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
 
         // Set the default location to London
         IMapController mapController = mapView.getController();
@@ -195,23 +196,15 @@ public class MainActivity extends AppCompatActivity
 
         mapView.getOverlays().add(marker);
 
-        mapView.setOnLongClickListener(new View.OnLongClickListener() {
+        mapView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onLongClick(View v) {
-                GeoPoint point = (GeoPoint) mapView.getProjection().fromPixels((int) v.getX(), (int) v.getY());
-                double latitude = point.getLatitude();
-                double longitude = point.getLongitude();
-
-                // Set the text of the form fields with latitude and longitude values
-                TextView latEditText = findViewById(R.id.latitude);
-                TextView lonEditText = findViewById(R.id.longitude);
-                latEditText.setText(String.valueOf(latitude));
-                lonEditText.setText(String.valueOf(longitude));
-
-                // Launch  XML form activity here
-                Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
-                startActivity(intent);
-                return true;
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    GeoPoint tapLocation = (GeoPoint) mapView.getProjection().fromPixels((int) event.getX(), (int) event.getY());
+                    marker.setPosition(tapLocation);
+                    alertDialog.show();
+                }
+                return false;
             }
         });
 
@@ -240,11 +233,44 @@ public class MainActivity extends AppCompatActivity
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Hide the keyboard
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+                // Start the search task
                 String startLocation = startEditText.getText().toString();
                 String endLocation = endEditText.getText().toString();
                 new SearchTask().execute(startLocation, endLocation);
+
             }
         });
+
+        startEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    startEditText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(startEditText, InputMethodManager.SHOW_IMPLICIT);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        endEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    endEditText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(endEditText, InputMethodManager.SHOW_IMPLICIT);
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
 
