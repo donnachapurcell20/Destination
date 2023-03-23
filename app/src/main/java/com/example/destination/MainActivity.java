@@ -48,6 +48,11 @@ public class MainActivity extends AppCompatActivity
     private Drawable nodeIcon;
     private Button openCloseButton;
     private Button submitButton;
+    private Marker marker;
+    private AlertDialog alertDialog;
+    private EditText categoryEditText;
+    private EditText latitudeEditText;
+    private EditText longitudeEditText;
 
 
 
@@ -164,7 +169,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         // Initialize views
         mapView = findViewById(R.id.map);
         startEditText = findViewById(R.id.start_point);
@@ -172,12 +176,55 @@ public class MainActivity extends AppCompatActivity
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.getController().setZoom(10);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
-        nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
+
+        //This might be my problem for the image just showing the straight arrow change this later!!
+//        nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
+
         // Set the default location to London
         IMapController mapController = mapView.getController();
         mapController.setZoom(12.0);
         GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
         mapController.setCenter(startPoint);
+
+        //Creating a new marker that is to be used by the user
+        marker = new Marker(mapView);
+        marker.setIcon(getResources().getDrawable(R.drawable.ic_marker));
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+
+        mapView.getOverlays().add(marker);
+
+        mapView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    GeoPoint tapLocation = (GeoPoint) mapView.getProjection().fromPixels((int) event.getX(), (int) event.getY());
+                    marker.setPosition(tapLocation);
+                    alertDialog.show();
+                }
+                return false;
+            }
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Add a marker here?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // Launch your form activity and pass the latitude and longitude of the clicked position
+                Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
+                intent.putExtra("latitude", marker.getPosition().getLatitude());
+                intent.putExtra("longitude", marker.getPosition().getLongitude());
+                startActivity(intent);
+
+            }
+
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                mapView.getOverlays().remove(marker);
+            }
+        });
+        alertDialog = builder.create();
+
 
         Button searchButton = findViewById(R.id.search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -186,31 +233,16 @@ public class MainActivity extends AppCompatActivity
                 String startLocation = startEditText.getText().toString();
                 String endLocation = endEditText.getText().toString();
                 new SearchTask().execute(startLocation, endLocation);
+
+                // Hide the keyboard
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
             }
         });
-
-        Button submitButton = findViewById(R.id.submit_button);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Show dialog to indicate marker has been added
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Marker added");
-                builder.setMessage("Your marker has been added successfully.");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // Navigate to map activity
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
-                    }
-                });
-                builder.show();
-            }
-        });
-
-
     }
+
+
     @Override
     protected void onPause() {
 
