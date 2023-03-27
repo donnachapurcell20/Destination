@@ -28,6 +28,7 @@ import com.example.destination.routing.OSRMRoadManager;
 import com.example.destination.routing.Road;
 import com.example.destination.routing.RoadManager;
 import com.example.destination.routing.RoadNode;
+import com.google.firebase.FirebaseApp;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -195,6 +196,10 @@ public class MainActivity extends AppCompatActivity
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
         mapView.getOverlays().add(marker);
+
+        //Initialising the Firebase
+        FirebaseApp.initializeApp(this);
+
 
         mapView.setOnTouchListener(new View.OnTouchListener() {
             @Override
