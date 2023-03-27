@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -44,6 +45,7 @@ import org.osmdroid.views.overlay.Polyline;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity
@@ -110,6 +112,62 @@ public class MainActivity extends AppCompatActivity
             return null;
         }
 
+//        @Override
+//        protected void onPostExecute(Road road) {
+//            super.onPostExecute(road);
+//            progressDialog.dismiss();
+//            if (road != null && road.mStatus == Road.STATUS_OK) {
+//                // Build a Polyline with the route shape
+//                Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
+//
+//                // Add this Polyline to the overlays of your map
+//                mapView.getOverlays().add(roadOverlay);
+//
+//                // Add markers for each step of the route
+//                for (int i = 0; i < road.mNodes.size(); i++) {
+//                    RoadNode node = road.mNodes.get(i);
+//                    Marker nodeMarker = new Marker(mapView);
+//                    nodeMarker.setPosition(node.mLocation);
+//
+//                    // Set the icon according to the maneuver
+//                    switch (node.mManeuverType) {
+//                        case RoadNode.MANEUVER_LEFT:
+//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
+//                            break;
+//                        case RoadNode.MANEUVER_RIGHT:
+//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
+//                            break;
+//                        case RoadNode.MANEUVER_ROUNDABOUT:
+//                            // Use a different drawable for each roundabout exit
+//                            int exitNumber = node.mInstructions.indexOf("exit");
+//                            if (exitNumber >= 0 && exitNumber < node.mInstructions.length() - 4) {
+//                                char exitChar = node.mInstructions.charAt(exitNumber + 5);
+//                                int exitCount = Character.getNumericValue(exitChar);
+//                                if (exitCount > 0 && exitCount <= 4) {
+//                                    String drawableName = "ic_roundabout_" + exitCount;
+//                                    int drawableId = getResources().getIdentifier(drawableName, "drawable", getPackageName());
+//                                    if (drawableId != 0) {
+//                                        nodeMarker.setIcon(getResources().getDrawable(drawableId));
+//                                        break;
+//                                    }
+//                                }
+//                            }
+//                            // Use the default roundabout drawable if the exit count cannot be determined
+//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_roundabout));
+//                            break;
+//                        default:
+//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
+//                            break;
+//                    }
+//
+//                    nodeMarker.setTitle("Step " + i);
+//                    nodeMarker.setSnippet(node.mInstructions);
+//                    nodeMarker.setSubDescription(Road.getLengthDurationText(MainActivity.this, node.mLength, node.mDuration));
+//                    mapView.getOverlays().add(nodeMarker);
+//                }
+//            }
+//        }
+
         @Override
         protected void onPostExecute(Road road) {
             super.onPostExecute(road);
@@ -163,11 +221,30 @@ public class MainActivity extends AppCompatActivity
                     nodeMarker.setSubDescription(Road.getLengthDurationText(MainActivity.this, node.mLength, node.mDuration));
                     mapView.getOverlays().add(nodeMarker);
                 }
+
+                // Display the duration of the route
+                int durationSeconds = (int) road.mDuration;
+                String durationText = formatDuration(durationSeconds);
+                //TextView durationTextView = findViewById(R.id.duration_text_view);
+                //durationTextView.setText(durationText);
             }
         }
 
+        private String formatDuration(int durationSeconds) {
+            int hours = durationSeconds / 3600;
+            int minutes = (durationSeconds % 3600) / 60;
+            int seconds = durationSeconds % 60;
+            return String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, seconds);
+        }
 
     }
+
+        private String formatDuration(int durationSeconds) {
+            int hours = durationSeconds / 3600;
+            int minutes = (durationSeconds % 3600) / 60;
+            int seconds = durationSeconds % 60;
+            return String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, seconds);
+        }
 
 
 
@@ -205,6 +282,10 @@ public class MainActivity extends AppCompatActivity
         // Get a reference to your database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Destination");
+
+
+
+
 
 
         mapView.setOnTouchListener(new View.OnTouchListener() {
