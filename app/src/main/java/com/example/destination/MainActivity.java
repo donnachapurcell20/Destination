@@ -29,6 +29,8 @@ import com.example.destination.routing.Road;
 import com.example.destination.routing.RoadManager;
 import com.example.destination.routing.RoadNode;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -199,6 +201,10 @@ public class MainActivity extends AppCompatActivity
 
         //Initialising the Firebase
         FirebaseApp.initializeApp(this);
+
+        // Get a reference to your database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Destination");
 
 
         mapView.setOnTouchListener(new View.OnTouchListener() {
