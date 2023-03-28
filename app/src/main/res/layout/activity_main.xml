@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mainLayout"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
@@ -10,76 +10,88 @@
         android:id="@+id/search_panel"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal" >
 
             <EditText
                 android:id="@+id/start_point"
+                android:hint="@string/start_point_hint"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
-                android:autofillHints="postalAddress"
                 android:completionThreshold="1"
-                android:hint="@string/start_point_hint"
-                android:inputType="text" />
+                android:inputType="text"
+                android:autofillHints="postalAddress" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal" >
 
             <EditText
                 android:id="@+id/end_point"
+                android:hint="@string/end_point_hint"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
-                android:autofillHints="postalAddress"
                 android:completionThreshold="1"
-                android:focusable="true"
+                android:inputType="text"
+                android:autofillHints="postalAddress"
                 android:focusableInTouchMode="true"
-                android:hint="@string/end_point_hint"
-                android:inputType="text" />
+                android:focusable="true" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="85dp"
-            android:orientation="horizontal">
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/search_button"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
                 android:text="@string/search_button_label" />
 
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
 
-
+            <ImageButton
+                android:id="@+id/expander"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/expander_bgrnd"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/transparent" />
 
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent" >
 
             <org.osmdroid.views.MapView
                 android:id="@+id/map"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:clickable="true"
-                android:contentDescription="Map view"
                 android:focusable="true"
-                android:focusableInTouchMode="true" />
+                android:focusableInTouchMode="true"
+                android:contentDescription="Map view"/>
             <!-- tools:context=".MainActivity" -->
         </RelativeLayout>
     </LinearLayout>
