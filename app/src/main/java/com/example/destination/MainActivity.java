@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ import com.example.destination.routing.RoadNode;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -50,17 +53,20 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
 {
+    FirebaseDatabase firebaseDatabase;
+    FirebaseFirestore firebaseFirestore;
     private MapView mapView;
     private EditText startEditText;
     private EditText endEditText;
     private Drawable nodeIcon;
-    private Button openCloseButton;
     private Button submitButton;
     private Marker marker;
     private AlertDialog alertDialog;
     private EditText categoryEditText;
     private EditText latitudeEditText;
     private EditText longitudeEditText;
+    private LinearLayout searchPanel;
+    private ImageButton imageButton;
 
 
 
@@ -250,6 +256,7 @@ public class MainActivity extends AppCompatActivity
 
     public void onCreate(Bundle savedInstanceState)
     {
+
 //        //Initialising the Firebase
 //        FirebaseApp.initializeApp(this);
 //
@@ -269,6 +276,8 @@ public class MainActivity extends AppCompatActivity
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.getController().setZoom(10);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+
+
 
         //This might be my problem for the image just showing the straight arrow change this later!!
 //        nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
@@ -368,7 +377,54 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
+
+        searchPanel = findViewById(R.id.search_panel);
+        imageButton = findViewById(R.id.image_button);
+        mapView = findViewById(R.id.map);
+
+        // Set up image button click listener
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleSearchPanel();
+            }
+        });
+
     }
+
+    private void toggleSearchPanel()
+    {
+        if (searchPanel.getVisibility() == View.VISIBLE) {
+            // Hide search panel
+            searchPanel.setVisibility(View.GONE);
+
+            // Change image button icon
+            imageButton.setImageResource(R.drawable.ic_baseline_expand_more_24);
+
+            // Update map view layout parameters
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            );
+            mapView.setLayoutParams(params);
+        } else {
+            // Show search panel
+            searchPanel.setVisibility(View.VISIBLE);
+
+            // Change image button icon
+            imageButton.setImageResource(R.drawable.ic_baseline_expand_less_24);
+
+            // Update map view layout parameters
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0,
+                    1
+            );
+            mapView.setLayoutParams(params);
+        }
+    }
+
 
 
     @Override

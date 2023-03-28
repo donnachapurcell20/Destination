@@ -10,6 +10,8 @@
     <string name="spinner_categories"></string>
     <string name="longitude">Longitude</string>
     <string name="latitude">Latitude</string>
+
+    <string name="expander_content_description"> Close/Open Panel</string>
     <!-- OpenStreetMap directions section -->
     <string name="osmbonuspack.directions.1">Continue[ on %s]</string>
     <string name="osmbonuspack.directions.6">Turn slight right[ on %s]</string>
