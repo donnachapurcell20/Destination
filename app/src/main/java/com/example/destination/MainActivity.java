@@ -248,9 +248,19 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
+//        //Initialising the Firebase
+//        FirebaseApp.initializeApp(this);
+//
+//        // Get a reference to your database
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("Destination");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         // Initialize views
         mapView = findViewById(R.id.map);
@@ -276,12 +286,7 @@ public class MainActivity extends AppCompatActivity
 
         mapView.getOverlays().add(marker);
 
-        //Initialising the Firebase
-        FirebaseApp.initializeApp(this);
 
-        // Get a reference to your database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Destination");
 
 
 
