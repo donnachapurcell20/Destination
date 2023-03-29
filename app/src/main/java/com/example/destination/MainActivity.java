@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,14 +48,20 @@ import org.osmdroid.views.overlay.Polyline;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity
 {
     FirebaseDatabase firebaseDatabase;
     FirebaseFirestore firebaseFirestore;
+    private Spinner categorySpinner;
+    private EditText longitudeme, latitudeme;
+
+    private DatabaseReference mDatabase;
     private MapView mapView;
     private EditText startEditText;
     private EditText endEditText;
@@ -67,6 +74,7 @@ public class MainActivity extends AppCompatActivity
     private EditText longitudeEditText;
     private LinearLayout searchPanel;
     private ImageButton imageButton;
+    private Button launchFormButton;
 
 
 
@@ -390,6 +398,19 @@ public class MainActivity extends AppCompatActivity
                 toggleSearchPanel();
             }
         });
+
+        launchFormButton = findViewById(R.id.form_button);
+        launchFormButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+
+
 
     }
 

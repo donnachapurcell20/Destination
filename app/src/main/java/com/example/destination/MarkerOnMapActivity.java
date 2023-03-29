@@ -8,11 +8,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MarkerOnMapActivity extends AppCompatActivity {
     private TextView latitudeTextView;
     private TextView longitudeTextView;
-
     private Spinner spinnercategories;
 
     // Declare a reference to your Firebase database
@@ -37,7 +37,7 @@ public class MarkerOnMapActivity extends AppCompatActivity {
         latitudeTextView.setText(String.valueOf(latitude));
 
         // Initialize your Firebase database reference
-        //mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     public void onSubmitButtonClick(View view) {
