@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "813456516267",
-    "firebase_url": "https://destination-4e42a-default-rtdb.europe-west1.firebasedatabase.app",
-    "project_id": "destination-4e42a",
-    "storage_bucket": "destination-4e42a.appspot.com"
+    "project_number": "199136241543",
+    "firebase_url": "https://destination-e6a01-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "destination-e6a01",
+    "storage_bucket": "destination-e6a01.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:813456516267:android:65fd9df75f85bde68083ee",
+        "mobilesdk_app_id": "1:199136241543:android:4d3a9fb226b7ac9333d522",
         "android_client_info": {
           "package_name": "com.example.destination"
         }
       },
       "oauth_client": [
         {
-          "client_id": "813456516267-kehdpdu3pjkf4nf1180qedd8bl7n75jp.apps.googleusercontent.com",
+          "client_id": "199136241543-dg8qnuk2j6v7rq1akliv2cbkourf0kes.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCJsEZa0p4VzpT2HPF3UyIiUTc1o6_Lp9o"
+          "current_key": "AIzaSyDFyRnvB_AgVkktCVX0OXboCTopGyRWQN8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "813456516267-kehdpdu3pjkf4nf1180qedd8bl7n75jp.apps.googleusercontent.com",
+              "client_id": "199136241543-dg8qnuk2j6v7rq1akliv2cbkourf0kes.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

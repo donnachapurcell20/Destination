@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -126,62 +127,6 @@ public class MainActivity extends AppCompatActivity
             return null;
         }
 
-//        @Override
-//        protected void onPostExecute(Road road) {
-//            super.onPostExecute(road);
-//            progressDialog.dismiss();
-//            if (road != null && road.mStatus == Road.STATUS_OK) {
-//                // Build a Polyline with the route shape
-//                Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
-//
-//                // Add this Polyline to the overlays of your map
-//                mapView.getOverlays().add(roadOverlay);
-//
-//                // Add markers for each step of the route
-//                for (int i = 0; i < road.mNodes.size(); i++) {
-//                    RoadNode node = road.mNodes.get(i);
-//                    Marker nodeMarker = new Marker(mapView);
-//                    nodeMarker.setPosition(node.mLocation);
-//
-//                    // Set the icon according to the maneuver
-//                    switch (node.mManeuverType) {
-//                        case RoadNode.MANEUVER_LEFT:
-//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
-//                            break;
-//                        case RoadNode.MANEUVER_RIGHT:
-//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
-//                            break;
-//                        case RoadNode.MANEUVER_ROUNDABOUT:
-//                            // Use a different drawable for each roundabout exit
-//                            int exitNumber = node.mInstructions.indexOf("exit");
-//                            if (exitNumber >= 0 && exitNumber < node.mInstructions.length() - 4) {
-//                                char exitChar = node.mInstructions.charAt(exitNumber + 5);
-//                                int exitCount = Character.getNumericValue(exitChar);
-//                                if (exitCount > 0 && exitCount <= 4) {
-//                                    String drawableName = "ic_roundabout_" + exitCount;
-//                                    int drawableId = getResources().getIdentifier(drawableName, "drawable", getPackageName());
-//                                    if (drawableId != 0) {
-//                                        nodeMarker.setIcon(getResources().getDrawable(drawableId));
-//                                        break;
-//                                    }
-//                                }
-//                            }
-//                            // Use the default roundabout drawable if the exit count cannot be determined
-//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_roundabout));
-//                            break;
-//                        default:
-//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
-//                            break;
-//                    }
-//
-//                    nodeMarker.setTitle("Step " + i);
-//                    nodeMarker.setSnippet(node.mInstructions);
-//                    nodeMarker.setSubDescription(Road.getLengthDurationText(MainActivity.this, node.mLength, node.mDuration));
-//                    mapView.getOverlays().add(nodeMarker);
-//                }
-//            }
-//        }
-
         @Override
         protected void onPostExecute(Road road) {
             super.onPostExecute(road);
@@ -236,42 +181,13 @@ public class MainActivity extends AppCompatActivity
                     mapView.getOverlays().add(nodeMarker);
                 }
 
-                // Display the duration of the route
-                int durationSeconds = (int) road.mDuration;
-                String durationText = formatDuration(durationSeconds);
-                //TextView durationTextView = findViewById(R.id.duration_text_view);
-                //durationTextView.setText(durationText);
             }
         }
-
-        private String formatDuration(int durationSeconds) {
-            int hours = durationSeconds / 3600;
-            int minutes = (durationSeconds % 3600) / 60;
-            int seconds = durationSeconds % 60;
-            return String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, seconds);
-        }
-
     }
-
-        private String formatDuration(int durationSeconds) {
-            int hours = durationSeconds / 3600;
-            int minutes = (durationSeconds % 3600) / 60;
-            int seconds = durationSeconds % 60;
-            return String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, seconds);
-        }
-
 
 
     public void onCreate(Bundle savedInstanceState)
     {
-
-//        //Initialising the Firebase
-//        FirebaseApp.initializeApp(this);
-//
-//        // Get a reference to your database
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("Destination");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -286,10 +202,6 @@ public class MainActivity extends AppCompatActivity
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
 
-
-        //This might be my problem for the image just showing the straight arrow change this later!!
-//        nodeIcon = getResources().getDrawable(R.drawable.ic_continue);
-
         // Set the default location to London
         IMapController mapController = mapView.getController();
         mapController.setZoom(12.0);
@@ -301,26 +213,36 @@ public class MainActivity extends AppCompatActivity
         marker.setIcon(getResources().getDrawable(R.drawable.ic_marker));
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
-        mapView.getOverlays().add(marker);
+        // Find the expand button in your layout
+        ImageButton expandButton = findViewById(R.id.image_button);
+        searchPanel = findViewById(R.id.search_panel);
 
 
-
-
-
-
-
-
-        mapView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    GeoPoint tapLocation = (GeoPoint) mapView.getProjection().fromPixels((int) event.getX(), (int) event.getY());
-                    marker.setPosition(tapLocation);
-                    alertDialog.show();
+        // Check if the image button is null
+        if (expandButton != null) {
+            // Set the click listener for the expand button
+            expandButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Toggle the visibility of the search panel
+                    if (searchPanel.getVisibility() == View.VISIBLE) {
+                        searchPanel.setVisibility(View.GONE);
+                        expandButton.setImageResource(R.drawable.ic_baseline_expand_more_24);
+                    } else {
+                        searchPanel.setVisibility(View.VISIBLE);
+                        expandButton.setImageResource(R.drawable.ic_baseline_expand_less_24);
+                    }
+                    // Adjust the layout params of the map view to fill the remaining space
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mapView.getLayoutParams();
+                    if (searchPanel.getVisibility() == View.VISIBLE) {
+                        params.addRule(RelativeLayout.BELOW, R.id.search_panel);
+                    } else {
+                        params.addRule(RelativeLayout.BELOW, 0);
+                    }
+                    mapView.setLayoutParams(params);
                 }
-                return false;
-            }
-        });
+            });
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Add a marker here?");
@@ -358,7 +280,6 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-
         startEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -384,34 +305,6 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
-
-
-
-        searchPanel = findViewById(R.id.search_panel);
-        imageButton = findViewById(R.id.image_button);
-        mapView = findViewById(R.id.map);
-
-        // Set up image button click listener
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleSearchPanel();
-            }
-        });
-
-        launchFormButton = findViewById(R.id.form_button);
-        launchFormButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
-
-
-
     }
 
     private void toggleSearchPanel()
