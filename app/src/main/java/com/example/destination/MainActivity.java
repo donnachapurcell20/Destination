@@ -146,34 +146,47 @@ public class MainActivity extends AppCompatActivity
 
                     // Set the icon according to the maneuver
                     switch (node.mManeuverType) {
-                        case RoadNode.MANEUVER_LEFT:
+                        case RoadNode.MANEUVER_TURN_LEFT:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
+                            break;
+                        case RoadNode.MANEUVER_TURN_RIGHT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
+                            break;
+                        case RoadNode.MANEUVER_STRAIGHT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
+                            break;
+                        case RoadNode.MANEUVER_UTURN_LEFT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_u_turn));
+                            break;
+                        case RoadNode.MANEUVER_UTURN_RIGHT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_u_turn));
+                            break;
+                        case RoadNode.MANEUVER_SHARP_LEFT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_sharp_left));
+                            break;
+                        case RoadNode.MANEUVER_SHARP_RIGHT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_sharp_right));
+                            break;
+                        case RoadNode.MANEUVER_SLIGHT_LEFT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
+                            break;
+                        case RoadNode.MANEUVER_SLIGHT_RIGHT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
                             break;
                         case RoadNode.MANEUVER_RIGHT:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
                             break;
+                        case RoadNode.MANEUVER_LEFT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
+                            break;
                         case RoadNode.MANEUVER_ROUNDABOUT:
-                            // Use a different drawable for each roundabout exit
-                            int exitNumber = node.mInstructions.indexOf("exit");
-                            if (exitNumber >= 0 && exitNumber < node.mInstructions.length() - 4) {
-                                char exitChar = node.mInstructions.charAt(exitNumber + 5);
-                                int exitCount = Character.getNumericValue(exitChar);
-                                if (exitCount > 0 && exitCount <= 4) {
-                                    String drawableName = "ic_roundabout_" + exitCount;
-                                    int drawableId = getResources().getIdentifier(drawableName, "drawable", getPackageName());
-                                    if (drawableId != 0) {
-                                        nodeMarker.setIcon(getResources().getDrawable(drawableId));
-                                        break;
-                                    }
-                                }
-                            }
-                            // Use the default roundabout drawable if the exit count cannot be determined
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_roundabout));
                             break;
                         default:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
                             break;
                     }
+
 
                     nodeMarker.setTitle("Step " + i);
                     nodeMarker.setSnippet(node.mInstructions);
