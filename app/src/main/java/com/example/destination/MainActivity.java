@@ -149,39 +149,21 @@ public class MainActivity extends AppCompatActivity
                         case RoadNode.MANEUVER_TURN_LEFT:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
                             break;
-                        case RoadNode.MANEUVER_TURN_RIGHT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
-                            break;
+//                        case RoadNode.MANEUVER_TURN_RIGHT:
+//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
+//                            break;
                         case RoadNode.MANEUVER_STRAIGHT:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
                             break;
-                        case RoadNode.MANEUVER_UTURN_LEFT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_u_turn));
-                            break;
-                        case RoadNode.MANEUVER_UTURN_RIGHT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_u_turn));
-                            break;
-                        case RoadNode.MANEUVER_SHARP_LEFT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_sharp_left));
-                            break;
-                        case RoadNode.MANEUVER_SHARP_RIGHT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_sharp_right));
-                            break;
-                        case RoadNode.MANEUVER_SLIGHT_LEFT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
-                            break;
-                        case RoadNode.MANEUVER_SLIGHT_RIGHT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
-                            break;
                         case RoadNode.MANEUVER_RIGHT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
                             break;
                         case RoadNode.MANEUVER_LEFT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
                             break;
-                        case RoadNode.MANEUVER_ROUNDABOUT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_roundabout));
-                            break;
+//                        case RoadNode.MANEUVER_ROUNDABOUT:
+//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_roundabout));
+//                            break;
                         default:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
                             break;
@@ -197,6 +179,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
 
 
     public void onCreate(Bundle savedInstanceState)

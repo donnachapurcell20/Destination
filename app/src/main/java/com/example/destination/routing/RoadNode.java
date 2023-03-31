@@ -8,17 +8,17 @@ import org.osmdroid.util.GeoPoint;
 public class RoadNode implements Parcelable {
 	public static final int MANEUVER_UNKNOWN = 0;
 	public static final int MANEUVER_TURN_LEFT = 1;
-	public static final int MANEUVER_TURN_RIGHT = 2;
-	public static final int MANEUVER_SHARP_LEFT = 3;
-	public static final int MANEUVER_SHARP_RIGHT = 4;
-	public static final int MANEUVER_SLIGHT_LEFT = 5;
-	public static final int MANEUVER_SLIGHT_RIGHT = 6;
-	public static final int MANEUVER_STRAIGHT = 7;
-	public static final int MANEUVER_UTURN_LEFT = 8;
-	public static final int MANEUVER_UTURN_RIGHT = 9;
-	public static final int MANEUVER_RIGHT = 10;
-	public static final int MANEUVER_LEFT = 11;
-	public static final int MANEUVER_ROUNDABOUT = 12;
+//	public static final int MANEUVER_TURN_RIGHT = 2;
+//	public static final int MANEUVER_SHARP_LEFT = 3;
+//	public static final int MANEUVER_SHARP_RIGHT = 4;
+//	public static final int MANEUVER_SLIGHT_LEFT = 5;
+//	public static final int MANEUVER_SLIGHT_RIGHT = 3;
+	public static final int MANEUVER_STRAIGHT = 2;
+//	public static final int MANEUVER_UTURN_LEFT = 8;
+//	public static final int MANEUVER_UTURN_RIGHT = 9;
+	public static final int MANEUVER_RIGHT = 4;
+	public static final int MANEUVER_LEFT = 3;
+//	public static final int MANEUVER_ROUNDABOUT = 4;
 
 	public int mManeuverType;
 	public String mInstructions;
