@@ -203,605 +203,609 @@ public class MainActivity extends AppCompatActivity
 
         // Create a HashMap to store the location data
         HashMap<String, Object> locationData = new HashMap<>();
-        // Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.8563);
-        locationData.put("longitude", -8.0737);
-        databaseReference.child("location102").setValue(locationData);
+
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.8691);
-        locationData.put("longitude", -7.9972);
-        databaseReference.child("location103").setValue(locationData);
+        locationData.put("latitude", 53.3809);
+        locationData.put("longitude", -7.9954);
+        databaseReference.child("location401").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.9574);
-        locationData.put("longitude", -7.7762);
-        databaseReference.child("location104").setValue(locationData);
+        locationData.put("latitude", 53.3340);
+        locationData.put("longitude", -8.2038);
+        databaseReference.child("location402").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.6535);
-        locationData.put("longitude", -7.7985);
-        databaseReference.child("location105").setValue(locationData);
+        locationData.put("latitude", 52.1122);
+        locationData.put("longitude", -8.0010);
+        databaseReference.child("location403").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.4890);
-        locationData.put("longitude", -8.1937);
-        databaseReference.child("location106").setValue(locationData);
+        locationData.put("latitude", 51.9734);
+        locationData.put("longitude", -7.8646);
+        databaseReference.child("location404").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.4520);
-        locationData.put("longitude", -8.0943);
-        databaseReference.child("location107").setValue(locationData);
+        locationData.put("latitude", 52.1278);
+        locationData.put("longitude", -7.7907);
+        databaseReference.child("location405").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.0954);
+        locationData.put("longitude", -7.6453);
+        databaseReference.child("location406").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.0982);
+        locationData.put("longitude", -7.5928);
+        databaseReference.child("location407").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.1328);
+        locationData.put("longitude", -7.5633);
+        databaseReference.child("location408").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.2830);
+        locationData.put("longitude", -7.2966);
+        databaseReference.child("location409").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.1561);
+        locationData.put("longitude", -7.1626);
+        databaseReference.child("location410").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.1743);
+        locationData.put("longitude", -7.1589);
+        databaseReference.child("location411").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.1765);
+        locationData.put("longitude", -7.1375);
+        databaseReference.child("location412").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.1766);
+        locationData.put("longitude", -7.0342);
+        databaseReference.child("location413").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.2366);
+        locationData.put("longitude", -7.0603);
+        databaseReference.child("location414").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.2302);
+        locationData.put("longitude", -7.1143);
+        databaseReference.child("location415").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.2599);
+        locationData.put("longitude", -7.1060);
+        databaseReference.child("location416").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.2585);
+        locationData.put("longitude", -7.1294);
+        databaseReference.child("location417").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.2650);
+        locationData.put("longitude", -7.1048);
+        databaseReference.child("location418").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.2474);
+        locationData.put("longitude", -7.1109);
+        databaseReference.child("location419").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 53.8748);
+        locationData.put("longitude", -8.6043);
+        databaseReference.child("location420").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.7685);
+        locationData.put("longitude", -6.1900);
+        databaseReference.child("location421").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.6852);
+        locationData.put("longitude", -6.2796);
+        databaseReference.child("location422").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.6449);
+        locationData.put("longitude", -6.2289);
+        databaseReference.child("location423").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.6426);
+        locationData.put("longitude", -6.2326);
+        databaseReference.child("location424").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.5970);
+        locationData.put("longitude", -6.5839);
+        databaseReference.child("location425").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.4593);
+        locationData.put("longitude", -6.4005);
+        databaseReference.child("location426").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.5146);
+        locationData.put("longitude", -6.3678);
+        databaseReference.child("location427").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.5030);
+        locationData.put("longitude", -6.5725);
+        databaseReference.child("location428").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.4328);
+        locationData.put("longitude", -6.7069);
+        databaseReference.child("location429").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.3772);
+        locationData.put("longitude", -6.5689);
+        databaseReference.child("location430").setValue(locationData);
+
+// Add the twelfth location
+        locationData.put("Category", "Speed Van");
+        locationData.put("latitude", 52.3034);
+        locationData.put("longitude", -6.4582);
+        databaseReference.child("location431").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
         locationData.put("latitude", 52.4412);
-        locationData.put("longitude", -8.0546);
-        databaseReference.child("location108").setValue(locationData);
+        locationData.put("longitude", -6.3567);
+        databaseReference.child("location432").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.4078);
-        locationData.put("longitude", -7.8958);
-        databaseReference.child("location109").setValue(locationData);
+        locationData.put("latitude", 52.3505);
+        locationData.put("longitude", -6.4938);
+        databaseReference.child("location433").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.3577);
-        locationData.put("longitude", -7.9895);
-        databaseReference.child("location110").setValue(locationData);
+        locationData.put("latitude", 52.3269);
+        locationData.put("longitude", -6.4846);
+        databaseReference.child("location434").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.3615);
-        locationData.put("longitude", -7.7550);
-        databaseReference.child("location111").setValue(locationData);
+        locationData.put("latitude", 52.3241);
+        locationData.put("longitude", -6.4927);
+        databaseReference.child("location435").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.3740);
-        locationData.put("longitude", -7.6989);
-        databaseReference.child("location112").setValue(locationData);
+        locationData.put("latitude", 52.3182);
+        locationData.put("longitude", -6.5183);
+        databaseReference.child("location436").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.3588);
-        locationData.put("longitude", -7.4898);
-        databaseReference.child("location113").setValue(locationData);
+        locationData.put("latitude", 53.1425);
+        locationData.put("longitude", -6.5598);
+        databaseReference.child("location437").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.3075);
-        locationData.put("longitude", -7.8963);
-        databaseReference.child("location114").setValue(locationData);
+        locationData.put("latitude", 53.1045);
+        locationData.put("longitude", -6.6053);
+        databaseReference.child("location438").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.3324);
-        locationData.put("longitude", -7.8163);
-        databaseReference.child("location115").setValue(locationData);
+        locationData.put("latitude", 53.0269);
+        locationData.put("longitude", -6.6404);
+        databaseReference.child("location439").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.9614);
-        locationData.put("longitude", -8.8696);
-        databaseReference.child("location116").setValue(locationData);
+        locationData.put("latitude", 52.9593);
+        locationData.put("longitude", -6.6997);
+        databaseReference.child("location440").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.6545);
-        locationData.put("longitude", -9.5229);
-        databaseReference.child("location117").setValue(locationData);
+        locationData.put("latitude", 52.9469);
+        locationData.put("longitude", -6.7121);
+        databaseReference.child("location441").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.6728);
-        locationData.put("longitude", -9.3919);
-        databaseReference.child("location118").setValue(locationData);
+        locationData.put("latitude", 52.7875);
+        locationData.put("longitude", -6.1677);
+        databaseReference.child("location442").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.7060);
-        locationData.put("longitude", -9.2847);
-        databaseReference.child("location119").setValue(locationData);
+        locationData.put("latitude", 52.7874);
+        locationData.put("longitude", -6.1678);
+        databaseReference.child("location443").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.7383);
-        locationData.put("longitude", -9.1747);
-        databaseReference.child("location120").setValue(locationData);
+        locationData.put("latitude", 52.8659);
+        locationData.put("longitude", -6.1039);
+        databaseReference.child("location444").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.8211);
-        locationData.put("longitude", -9.0139);
-        databaseReference.child("location121").setValue(locationData);
+        locationData.put("latitude", 52.9032);
+        locationData.put("longitude", -6.1019);
+        databaseReference.child("location445").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.8391);
-        locationData.put("longitude", -8.9707);
-        databaseReference.child("location122").setValue(locationData);
+        locationData.put("latitude", 52.9481);
+        locationData.put("longitude", -6.1012);
+        databaseReference.child("location446").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.7892);
-        locationData.put("longitude", -8.7743);
-        databaseReference.child("location123").setValue(locationData);
+        locationData.put("latitude", 53.0849);
+        locationData.put("longitude", -6.0676);
+        databaseReference.child("location447").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.6840);
-        locationData.put("longitude", -8.7210);
-        databaseReference.child("location124").setValue(locationData);
+        locationData.put("latitude", 53.2020);
+        locationData.put("longitude", -6.5010);
+        databaseReference.child("location448").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.6732);
-        locationData.put("longitude", -8.6161);
-        databaseReference.child("location125").setValue(locationData);
+        locationData.put("latitude", 53.1853);
+        locationData.put("longitude", -6.5205);
+        databaseReference.child("location449").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.7317);
-        locationData.put("longitude", -8.5502);
-        databaseReference.child("location126").setValue(locationData);
+        locationData.put("latitude", 52.3393);
+        locationData.put("longitude", -8.6767);
+        databaseReference.child("location450").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.7975);
-        locationData.put("longitude", -8.4499);
-        databaseReference.child("location127").setValue(locationData);
+        locationData.put("latitude", 53.0965);
+        locationData.put("longitude", -7.9107);
+        databaseReference.child("location451").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.0901);
-        locationData.put("longitude", -8.1906);
-        databaseReference.child("location128").setValue(locationData);
+        locationData.put("latitude", 52.7694);
+        locationData.put("longitude", -6.9549);
+        databaseReference.child("location452").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.1109);
-        locationData.put("longitude", -8.8005);
-        databaseReference.child("location129").setValue(locationData);
+        locationData.put("latitude", 52.3304);
+        locationData.put("longitude", -7.0552);
+        databaseReference.child("location453").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.0644);
-        locationData.put("longitude", -8.8136);
-        databaseReference.child("location130").setValue(locationData);
+        locationData.put("latitude", 52.1037);
+        locationData.put("longitude", -7.6589);
+        databaseReference.child("location454").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.1776);
-        locationData.put("longitude", -8.8393);
-        databaseReference.child("location131").setValue(locationData);
+        locationData.put("latitude", 52.3852);
+        locationData.put("longitude", -6.9015);
+        databaseReference.child("location455").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.2135);
-        locationData.put("longitude", -8.6866);
-        databaseReference.child("location132").setValue(locationData);
+        locationData.put("latitude", 52.3928);
+        locationData.put("longitude", -6.9338);
+        databaseReference.child("location456").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.4006);
-        locationData.put("longitude", -8.3347);
-        databaseReference.child("location133").setValue(locationData);
+        locationData.put("latitude", 52.3608);
+        locationData.put("longitude", -6.7983);
+        databaseReference.child("location457").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.4006);
-        locationData.put("longitude", -8.3347);
-        databaseReference.child("location133").setValue(locationData);
+        locationData.put("latitude", 52.4336);
+        locationData.put("longitude", -6.7741);
+        databaseReference.child("location458").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.4830);
-        locationData.put("longitude", -8.5420);
-        databaseReference.child("location134").setValue(locationData);
+        locationData.put("latitude", 52.4402);
+        locationData.put("longitude", -6.7344);
+        databaseReference.child("location459").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.3541);
-        locationData.put("longitude", -8.9338);
-        databaseReference.child("location135").setValue(locationData);
+        locationData.put("latitude", 52.4943);
+        locationData.put("longitude", -6.5909);
+        databaseReference.child("location460").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.5435);
-        locationData.put("longitude", -8.8444);
-        databaseReference.child("location136").setValue(locationData);
+        locationData.put("latitude", 52.4400);
+        locationData.put("longitude", -6.5389);
+        databaseReference.child("location461").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.3054);
-        locationData.put("longitude", -8.9248);
-        databaseReference.child("location137").setValue(locationData);
+        locationData.put("latitude", 52.5735);
+        locationData.put("longitude", -6.5181);
+        databaseReference.child("location462").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.3001);
-        locationData.put("longitude", -8.9618);
-        databaseReference.child("location138").setValue(locationData);
+        locationData.put("latitude", 52.5896);
+        locationData.put("longitude", -6.4943);
+        databaseReference.child("location463").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.2719);
-        locationData.put("longitude", -8.9171);
-        databaseReference.child("location139").setValue(locationData);
+        locationData.put("latitude", 52.6282);
+        locationData.put("longitude", -6.6238);
+        databaseReference.child("location464").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.2888);
-        locationData.put("longitude", -9.0229);
-        databaseReference.child("location140").setValue(locationData);
+        locationData.put("latitude", 52.6484);
+        locationData.put("longitude", -6.6464);
+        databaseReference.child("location465").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.2452);
-        locationData.put("longitude", -9.3576);
-        databaseReference.child("location141").setValue(locationData);
+        locationData.put("latitude", 52.2605);
+        locationData.put("longitude", -6.4593);
+        databaseReference.child("location466").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.2401);
-        locationData.put("longitude", -9.4669);
-        databaseReference.child("location142").setValue(locationData);
+        locationData.put("latitude", 52.2445);
+        locationData.put("longitude", -6.3669);
+        databaseReference.child("location467").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.3797);
-        locationData.put("longitude", -9.2504);
-        databaseReference.child("location143").setValue(locationData);
+        locationData.put("latitude", 52.3414);
+        locationData.put("longitude", -6.5729);
+        databaseReference.child("location468").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.0578);
-        locationData.put("longitude", -7.7585);
-        databaseReference.child("location144").setValue(locationData);
+        locationData.put("latitude", 52.3288);
+        locationData.put("longitude", -6.5068);
+        databaseReference.child("location469").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.9588);
-        locationData.put("longitude", -8.0800);
-        databaseReference.child("location145").setValue(locationData);
+        locationData.put("latitude", 54.0121);
+        locationData.put("longitude", -6.4031);
+        databaseReference.child("location470").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.9716);
-        locationData.put("longitude", -8.0643);
-        databaseReference.child("location146").setValue(locationData);
+        locationData.put("latitude", 54.0008);
+        locationData.put("longitude", -6.4057);
+        databaseReference.child("location471").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.2042);
-        locationData.put("longitude", -7.1598);
-        databaseReference.child("location147").setValue(locationData);
+        locationData.put("latitude", 52.2389);
+        locationData.put("longitude", -7.1770);
+        databaseReference.child("location472").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.9607);
-        locationData.put("longitude", -6.7515);
-        databaseReference.child("location148").setValue(locationData);
+        locationData.put("latitude", 52.3518);
+        locationData.put("longitude", -7.3868);
+        databaseReference.child("location473").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.9833);
-        locationData.put("longitude", -6.7170);
-        databaseReference.child("location149").setValue(locationData);
+        locationData.put("latitude", 54.9651);
+        locationData.put("longitude", -7.7623);
+        databaseReference.child("location474").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.0585);
-        locationData.put("longitude", -6.6968);
-        databaseReference.child("location150").setValue(locationData);
+        locationData.put("latitude", 55.2623);
+        locationData.put("longitude", -7.4093);
+        databaseReference.child("location475").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.0585);
-        locationData.put("longitude", -6.6968);
-        databaseReference.child("location151").setValue(locationData);
+        locationData.put("latitude", 54.7952);
+        locationData.put("longitude", -7.7937);
+        databaseReference.child("location476").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.2662);
-        locationData.put("longitude", -6.8926);
-        databaseReference.child("location152").setValue(locationData);
+        locationData.put("latitude", 54.8023);
+        locationData.put("longitude", -7.8051);
+        databaseReference.child("location477").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.3267);
-        locationData.put("longitude", -6.9616);
-        databaseReference.child("location153").setValue(locationData);
+        locationData.put("latitude", 53.9911);
+        locationData.put("longitude", -6.3788);
+        databaseReference.child("location478").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.4002);
-        locationData.put("longitude", -6.9756);
-        databaseReference.child("location154").setValue(locationData);
+        locationData.put("latitude", 53.9974);
+        locationData.put("longitude", -6.8981);
+        databaseReference.child("location479").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.9682);
-        locationData.put("longitude", -7.8199);
-        databaseReference.child("location155").setValue(locationData);
+        locationData.put("latitude", 53.7963);
+        locationData.put("longitude", -6.4873);
+        databaseReference.child("location480").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.1587);
-        locationData.put("longitude", -7.9451);
-        databaseReference.child("location156").setValue(locationData);
+        locationData.put("latitude", 53.7736);
+        locationData.put("longitude", -7.4938);
+        databaseReference.child("location481").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.3020);
-        locationData.put("longitude", -7.8189);
-        databaseReference.child("location157").setValue(locationData);
+        locationData.put("latitude", 53.2753);
+        locationData.put("longitude", -8.9849);
+        databaseReference.child("location482").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.3124);
-        locationData.put("longitude", -7.7117);
-        databaseReference.child("location158").setValue(locationData);
+        locationData.put("latitude", 53.2601);
+        locationData.put("longitude", -9.1258);
+        databaseReference.child("location483").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.2804);
-        locationData.put("longitude", -7.5008);
-        databaseReference.child("location159").setValue(locationData);
+        locationData.put("latitude", 53.6532);
+        locationData.put("longitude", -6.6825);
+        databaseReference.child("location484").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.2717);
-        locationData.put("longitude", -7.4952);
-        databaseReference.child("location160").setValue(locationData);
+        locationData.put("latitude", 53.5079);
+        locationData.put("longitude", -6.1844);
+        databaseReference.child("location485").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.2500);
-        locationData.put("longitude", -7.3992);
-        databaseReference.child("location161").setValue(locationData);
+        locationData.put("latitude", 53.5220);
+        locationData.put("longitude", -6.1479);
+        databaseReference.child("location486").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.2664);
-        locationData.put("longitude", -7.3349);
-        databaseReference.child("location162").setValue(locationData);
+        locationData.put("latitude", 53.4853);
+        locationData.put("longitude", -6.1507);
+        databaseReference.child("location487").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.1698);
-        locationData.put("longitude", -7.2303);
-        databaseReference.child("location163").setValue(locationData);
+        locationData.put("latitude", 53.3896);
+        locationData.put("longitude", -6.1979);
+        databaseReference.child("location488").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.3339);
-        locationData.put("longitude", -7.0665);
-        databaseReference.child("location164").setValue(locationData);
+        locationData.put("latitude", 53.3590);
+        locationData.put("longitude", -6.1962);
+        databaseReference.child("location489").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.3938);
-        locationData.put("longitude", -7.5848);
-        databaseReference.child("location165").setValue(locationData);
+        locationData.put("latitude", 53.3908);
+        locationData.put("longitude", -6.3197);
+        databaseReference.child("location490").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.2405);
-        locationData.put("longitude", -7.2992);
-        databaseReference.child("location166").setValue(locationData);
+        locationData.put("latitude", 53.3643);
+        locationData.put("longitude", -6.2293);
+        databaseReference.child("location491").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.2232);
-        locationData.put("longitude", -7.2670);
-        databaseReference.child("location167").setValue(locationData);
+        locationData.put("latitude", 53.3698);
+        locationData.put("longitude", -6.3249);
+        databaseReference.child("location492").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.1993);
-        locationData.put("longitude", -7.3966);
-        databaseReference.child("location168").setValue(locationData);
+        locationData.put("latitude", 53.3613);
+        locationData.put("longitude", -6.2910);
+        databaseReference.child("location493").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.1962);
-        locationData.put("longitude", -7.0533);
-        databaseReference.child("location169").setValue(locationData);
+        locationData.put("latitude", 53.3545);
+        locationData.put("longitude", -6.2733);
+        databaseReference.child("location494").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.2034);
-        locationData.put("longitude", -6.9819);
-        databaseReference.child("location170").setValue(locationData);
+        locationData.put("latitude", 53.3499);
+        locationData.put("longitude", -6.2680);
+        databaseReference.child("location495").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.1513);
-        locationData.put("longitude", -7.1529);
-        databaseReference.child("location171").setValue(locationData);
+        locationData.put("latitude", 53.3528);
+        locationData.put("longitude", -6.2489);
+        databaseReference.child("location496").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.1370);
-        locationData.put("longitude", -7.2242);
-        databaseReference.child("location172").setValue(locationData);
+        locationData.put("latitude", 53.3475);
+        locationData.put("longitude", -6.2907);
+        databaseReference.child("location497").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.1125);
-        locationData.put("longitude", -7.2097);
-        databaseReference.child("location173").setValue(locationData);
+        locationData.put("latitude", 53.3452);
+        locationData.put("longitude", -6.2693);
+        databaseReference.child("location498").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.0890);
-        locationData.put("longitude", -7.2416);
-        databaseReference.child("location174").setValue(locationData);
+        locationData.put("latitude", 53.3240);
+        locationData.put("longitude", -6.3282);
+        databaseReference.child("location499").setValue(locationData);
 
 // Add the twelfth location
         locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.0653);
-        locationData.put("longitude", -7.3043);
-        databaseReference.child("location175").setValue(locationData);
+        locationData.put("latitude", 53.3215);
+        locationData.put("longitude", -6.2794);
+        databaseReference.child("location500").setValue(locationData);
 
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.0935);
-        locationData.put("longitude", -7.4777);
-        databaseReference.child("location176").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.1491);
-        locationData.put("longitude", -7.4450);
-        databaseReference.child("location177").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.1488);
-        locationData.put("longitude", -7.4456);
-        databaseReference.child("location178").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.1168);
-        locationData.put("longitude", -7.4592);
-        databaseReference.child("location179").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.1530);
-        locationData.put("longitude", -7.9271);
-        databaseReference.child("location180").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.1174);
-        locationData.put("longitude", -8.1383);
-        databaseReference.child("location181").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.0798);
-        locationData.put("longitude", -8.2901);
-        databaseReference.child("location182").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.9850);
-        locationData.put("longitude", -8.3195);
-        databaseReference.child("location183").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.9935);
-        locationData.put("longitude", -8.3082);
-        databaseReference.child("location184").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 55.0470);
-        locationData.put("longitude", -8.2410);
-        databaseReference.child("location185").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.9783);
-        locationData.put("longitude", -7.7265);
-        databaseReference.child("location186").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.9411);
-        locationData.put("longitude", -7.6955);
-        databaseReference.child("location187").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.9480);
-        locationData.put("longitude", -7.7139);
-        databaseReference.child("location188").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.9539);
-        locationData.put("longitude", -7.7224);
-        databaseReference.child("location189").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.9820);
-        locationData.put("longitude", -7.5607);
-        databaseReference.child("location190").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.9402);
-        locationData.put("longitude", -7.6191);
-        databaseReference.child("location191").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.8877);
-        locationData.put("longitude", -7.5567);
-        databaseReference.child("location192").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.8695);
-        locationData.put("longitude", -7.6103);
-        databaseReference.child("location193").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.8487);
-        locationData.put("longitude", -7.5001);
-        databaseReference.child("location194").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.8195);
-        locationData.put("longitude", -7.5048);
-        databaseReference.child("location195").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.7977);
-        locationData.put("longitude", -7.5653);
-        databaseReference.child("location196").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.8043);
-        locationData.put("longitude", -7.7444);
-        databaseReference.child("location197").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.8359);
-        locationData.put("longitude", -7.7407);
-        databaseReference.child("location198").setValue(locationData);
 
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.8046);
-        locationData.put("longitude", -7.7680);
-        databaseReference.child("location199").setValue(locationData);
-
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.7107);
-        locationData.put("longitude", -7.9694);
-        databaseReference.child("location200").setValue(locationData);
 
 
 
