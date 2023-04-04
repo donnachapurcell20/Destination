@@ -811,6 +811,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
         // Initialize views
         mapView = findViewById(R.id.map);
         startEditText = findViewById(R.id.start_point);
