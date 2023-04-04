@@ -2,9 +2,10 @@ package com.example.destination;
 
 public class VanCameraLocations
 {
+    private String category;
     private double latitude;
     private double longitude;
-    private String name;
+
 
     private String[] options = {"Speed Van", "Speed Camera", "Construction", "Accident", "Traffic"};
 
@@ -18,16 +19,16 @@ public class VanCameraLocations
 
 
 
-    public VanCameraLocations()
+    public VanCameraLocations(String category, double latitude, double longitude)
     {
 
     }
 
-    public VanCameraLocations(double latitude, double longitude, String name)
+    public VanCameraLocations(double latitude, double longitude, String category)
     {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.name = name;
+        this.category = category;
     }
 
     public double getLatitude() {
@@ -46,11 +47,11 @@ public class VanCameraLocations
         this.longitude = longitude;
     }
 
-    public String getName() {
-        return name;
+    public String getCategory() {
+        return category;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCategory(String name) {
+        this.category = name;
     }
 }
