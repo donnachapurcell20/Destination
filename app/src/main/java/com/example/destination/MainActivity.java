@@ -195,159 +195,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("locations");
-
-        // Create a Firebase database reference
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("locations");
-
-        // Create a HashMap to store the location data
-        HashMap<String, Object> locationData = new HashMap<>();
-
-        // Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.371854);
-        locationData.put("longitude", -6.331091);
-        databaseReference.child("location1301").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.360746);
-        locationData.put("longitude", -6.272876);
-        databaseReference.child("location1302").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.354469);
-        locationData.put("longitude", -6.273307);
-        databaseReference.child("location1303").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.349935);
-        locationData.put("longitude", -6.267989);
-        databaseReference.child("location1304").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.348989);
-        locationData.put("longitude", -6.251547);
-        databaseReference.child("location1305").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.348965);
-        locationData.put("longitude", -6.251631);
-        databaseReference.child("location1306").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.346875);
-        locationData.put("longitude", -6.290776);
-        databaseReference.child("location1307").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.323302);
-        locationData.put("longitude", -6.352401);
-        databaseReference.child("location1308").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.322829);
-        locationData.put("longitude", -6.279177);
-        databaseReference.child("location1309").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.316961);
-        locationData.put("longitude", -6.326202);
-        databaseReference.child("location1310").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.29159);
-        locationData.put("longitude", -6.357379);
-        databaseReference.child("location1311").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.291007);
-        locationData.put("longitude", -6.404592);
-        databaseReference.child("location1312").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.284252);
-        locationData.put("longitude", -6.378243);
-        databaseReference.child("location1313").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.856558);
-        locationData.put("longitude", -9.014445);
-        databaseReference.child("location1314").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.673236);
-        locationData.put("longitude", -8.640304);
-        databaseReference.child("location1315").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.673133);
-        locationData.put("longitude", -8.517);
-        databaseReference.child("location1316").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 52.63478);
-        locationData.put("longitude", -7.251674);
-        databaseReference.child("location1317").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 51.88613);
-        locationData.put("longitude", -8.609543);
-        databaseReference.child("location1318").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 51.903266);
-        locationData.put("longitude", -8.425794);
-        databaseReference.child("location1319").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 51.899639);
-        locationData.put("longitude", -8.465884);
-        databaseReference.child("location1320").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 51.864755);
-        locationData.put("longitude", -8.439695);
-        databaseReference.child("location1321").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 54.0821);
-        locationData.put("longitude", -8.5634);
-        databaseReference.child("location1322").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 51.906869);
-        locationData.put("longitude", -8.496283);
-        databaseReference.child("location1323").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.905504);
-        locationData.put("longitude", -9.750139);
-        databaseReference.child("location1324").setValue(locationData);
-// Add the twelfth location
-        locationData.put("Category", "Speed Van");
-        locationData.put("latitude", 53.896012);
-        locationData.put("longitude", -9.154622);
-        databaseReference.child("location1325").setValue(locationData);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("locations");
+//
+//        // Create a Firebase database reference
+//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("locations");
 
         // Initialize views
         mapView = findViewById(R.id.map);
@@ -372,36 +224,32 @@ public class MainActivity extends AppCompatActivity
         ImageButton expandButton = findViewById(R.id.image_button);
         searchPanel = findViewById(R.id.search_panel);
 
-//        // Retrieve data from Firebase Realtime Database
-//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
-//        ref.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                List<VanCameraLocations> locationList = new ArrayList<>();
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    String category = snapshot.child("category").getValue(String.class);
-//                    double latitude = snapshot.child("latitude").getValue(Double.class);
-//                    double longitude = snapshot.child("longitude").getValue(Double.class);
-//                    VanCameraLocations location = new VanCameraLocations(category, latitude, longitude);
-//                    locationList.add(location);
-//                }
-//                // Display markers on mapview
-//                for (VanCameraLocations location : locationList) {
-//                    Marker marker = new Marker(mapView);
-//                    marker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
-//                    marker.setTitle(location.getCategory());
-//                    mapView.getOverlays().add(marker);
-//                }
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.e(TAG, "onCancelled", databaseError.toException());
-//            }
-//        });
-
-
-
-
+        // Retrieve data from Firebase Realtime Database
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<VanCameraLocations> locationList = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String category = snapshot.child("category").getValue(String.class);
+                    double latitude = snapshot.child("latitude").getValue(Double.class);
+                    double longitude = snapshot.child("longitude").getValue(Double.class);
+                    VanCameraLocations location = new VanCameraLocations(category, latitude, longitude);
+                    locationList.add(location);
+                }
+                // Display markers on mapview
+                for (VanCameraLocations location : locationList) {
+                    Marker marker = new Marker(mapView);
+                    marker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
+                    marker.setTitle(location.getCategory());
+                    mapView.getOverlays().add(marker);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "onCancelled", databaseError.toException());
+            }
+        });
 
 
         // Check if the image button is null
