@@ -12,6 +12,8 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -82,6 +84,10 @@ public class MainActivity extends AppCompatActivity
     private LinearLayout searchPanel;
     private ImageButton imageButton;
     private Button launchFormButton;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+
+
 
 
 
@@ -155,9 +161,9 @@ public class MainActivity extends AppCompatActivity
                         case RoadNode.MANEUVER_TURN_LEFT:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
                             break;
-//                        case RoadNode.MANEUVER_TURN_RIGHT:
-//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
-//                            break;
+                        case RoadNode.MANEUVER_TURN_RIGHT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
+                            break;
                         case RoadNode.MANEUVER_STRAIGHT:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
                             break;
@@ -167,14 +173,13 @@ public class MainActivity extends AppCompatActivity
                         case RoadNode.MANEUVER_LEFT:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
                             break;
-//                        case RoadNode.MANEUVER_ROUNDABOUT:
-//                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_roundabout));
-//                            break;
+                        case RoadNode.MANEUVER_ROUNDABOUT:
+                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_roundabout));
+                            break;
                         default:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
                             break;
                     }
-
 
                     nodeMarker.setTitle("Step " + i);
                     nodeMarker.setSnippet(node.mInstructions);
@@ -182,15 +187,24 @@ public class MainActivity extends AppCompatActivity
                     mapView.getOverlays().add(nodeMarker);
                 }
 
+                // Zoom to the bounds of the route
+                BoundingBoxE6 routeBounds = roadOverlay.getBounds();
+                mapView.zoomToBoundingBox(routeBounds);
+
+                // Center the map on the starting point of the route
+                GeoPoint startPoint = road.mNodes.get(0).mLocation;
+                mapView.getController().setCenter(startPoint);
+            } else {
+                // Display an error message to the user
+                Toast.makeText(MainActivity.this, "Unable to calculate route.", Toast.LENGTH_SHORT).show();
             }
         }
-    }
 
 
 
 
 
-    public void onCreate(Bundle savedInstanceState)
+        public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -238,10 +252,12 @@ public class MainActivity extends AppCompatActivity
                     locationList.add(location);
                 }
                 // Display markers on mapview
+                Drawable markerIcon = getResources().getDrawable(R.drawable.img);
                 for (VanCameraLocations location : locationList) {
                     Marker marker = new Marker(mapView);
                     marker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
                     marker.setTitle(location.getCategory());
+                    marker.setIcon(markerIcon);
                     mapView.getOverlays().add(marker);
                 }
             }
@@ -250,6 +266,61 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, "onCancelled", databaseError.toException());
             }
         });
+
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                // Update user's location on the map
+                GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                marker.setPosition(geoPoint);
+                mapView.getController().animateTo(geoPoint);
+
+                // Calculate distance to the next direction
+                double distance = calculateDistanceToNextDirection(location);
+                // Show distance on the UI
+                TextView distanceTextView = findViewById(R.id.distance_text_view);
+                distanceTextView.setText(String.format("%.2f km", distance / 1000));
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(String provider) {}
+
+            @Override
+            public void onProviderDisabled(String provider) {}
+        };
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        }
+
+        @Override
+        public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSIONS_REQUEST_LOCATION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Request location updates from the GPS sensor
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            }
+        }
+    }
+        private double calculateDistanceToNextDirection(Location location) {
+        // TODO: Implement this method
+        return 0;
+    }
+
+
+
+
+
+
+
+
 
 
         // Check if the image button is null
@@ -278,46 +349,46 @@ public class MainActivity extends AppCompatActivity
             });
         }
 
-        mapView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Get the location of the touch
-                    GeoPoint touchedPoint = (GeoPoint) mapView.getProjection().fromPixels((int)event.getX(), (int)event.getY());
-
-                    // Create the marker
-                    Marker marker = new Marker(mapView);
-                    marker.setPosition(touchedPoint);
-
-                    // Show the confirmation dialog
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("Add a marker here?");
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Launch your form activity and pass the latitude and longitude of the clicked position
-                            Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
-                            intent.putExtra("latitude", marker.getPosition().getLatitude());
-                            intent.putExtra("longitude", marker.getPosition().getLongitude());
-                            startActivity(intent);
-
-                        }
-
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            mapView.getOverlays().remove(marker);
-                        }
-                    });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-
-                    // Add the marker to the map
-                    mapView.getOverlays().add(marker);
-                    mapView.invalidate();
-                }
-                return true;
-            }
-        });
+//        mapView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_UP) {
+//                    // Get the location of the touch
+//                    GeoPoint touchedPoint = (GeoPoint) mapView.getProjection().fromPixels((int)event.getX(), (int)event.getY());
+//
+//                    // Create the marker
+//                    Marker marker = new Marker(mapView);
+//                    marker.setPosition(touchedPoint);
+//
+//                    // Show the confirmation dialog
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                    builder.setMessage("Add a marker here?");
+//                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int id) {
+//                            // Launch your form activity and pass the latitude and longitude of the clicked position
+//                            Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
+//                            intent.putExtra("latitude", marker.getPosition().getLatitude());
+//                            intent.putExtra("longitude", marker.getPosition().getLongitude());
+//                            startActivity(intent);
+//
+//                        }
+//
+//                    });
+//                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int id) {
+//                            mapView.getOverlays().remove(marker);
+//                        }
+//                    });
+//                    AlertDialog alertDialog = builder.create();
+//                    alertDialog.show();
+//
+//                    // Add the marker to the map
+//                    mapView.getOverlays().add(marker);
+//                    mapView.invalidate();
+//                }
+//                return true;
+//            }
+//        });
 
 
         Button searchButton = findViewById(R.id.search_button);
@@ -392,6 +463,8 @@ public class MainActivity extends AppCompatActivity
             mapView.setLayoutParams(params);
         }
     }
+
+
 
 
 

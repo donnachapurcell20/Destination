@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 
 //This gets a route between the start and end points, going through a list of waypoints.
-	//Useing OSRM free open source routing service based on the openstreetmap data
+	//Using OSRM free open source routing service based on the openstreetmap data
 public class OSRMRoadManager extends RoadManager {
 
 	static final String DEFAULT_SERVICE = "https://routing.openstreetmap.de/";
