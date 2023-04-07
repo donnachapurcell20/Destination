@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
     private class GeocoderTask extends AsyncTask<String, Void, Road> {
 
         private ProgressDialog progressDialog;
@@ -230,12 +231,16 @@ public class MainActivity extends AppCompatActivity
         mapView.setMultiTouchControls(true);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
+
         // Set the default location to London
         IMapController mapController = mapView.getController();
 //        mapController.setZoom(12.0);
         mapView.getController().setZoom(12.0);
         GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
         mapController.setCenter(startPoint);
+
+
+
 
         //Creating a new marker that is to be used by the user
         marker = new Marker(mapView);
