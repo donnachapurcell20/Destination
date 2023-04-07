@@ -17,6 +17,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -32,6 +33,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -48,13 +50,17 @@ import com.example.destination.routing.Road;
 import com.example.destination.routing.RoadManager;
 import com.example.destination.routing.RoadNode;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
@@ -78,6 +84,12 @@ import java.util.Map;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import org.osmdroid.views.overlay.Marker;
 
 import android.Manifest;
 
@@ -241,36 +253,6 @@ public class MainActivity extends AppCompatActivity
 //        // Create a Firebase database reference
 //        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("locations");
 
-            // Get the system's LocationManager service
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-// Check if the app has permission to access the user's location
-            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                // Permission is granted, you can use the method that requires the permission here
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-                //Once you have permission, following code gets the user's current location
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                //Update the user's location on the map
-                GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-                mapView.getController().animateTo(userLocation);
-
-                //The context variable needs to be initialized with a valid Context object
-                Context context = MainActivity.this;
-                // Create a new location overlay
-                MyLocationNewOverlay myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), mapView);
-
-                // Enable the overlay to show the user's location
-                myLocationOverlay.enableMyLocation();
-
-                // Add the overlay to the map view
-                mapView.getOverlays().add(myLocationOverlay);
-            } else {
-                // Permission is not granted, request the permission
-                ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-
 
             // Initialize views
             mapView = findViewById(R.id.map);
@@ -283,91 +265,12 @@ public class MainActivity extends AppCompatActivity
             Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
 
-
-
-            // Define a location listener
-            LocationListener locationListener = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    // This method is called when the user's location changes
-                    // You can update the user's location on the map here
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-                    // This method is called when the GPS status changes
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-                    // This method is called when the GPS is turned on
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-                    // This method is called when the GPS is turned off
-                }
-            };
-
-// Check if the app has permission to access the user's location
-            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                // Permission is granted, you can use the method that requires the permission here
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-                //Once you have permission, following code gets the user's current location
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                //Update the user's location on the map
-                GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-                mapView.getController().animateTo(userLocation);
-
-                //The context variable needs to be initialized with a valid Context object
-                Context context = MainActivity.this;
-                // Create a new location overlay
-                MyLocationNewOverlay myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), mapView);
-
-                // Enable the overlay to show the user's location
-                myLocationOverlay.enableMyLocation();
-
-                // Add the overlay to the map view
-                mapView.getOverlays().add(myLocationOverlay);
-            } else {
-                // Permission is not granted, request the permission
-                ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-
-            // Get the user's current location
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-
-            // Add a marker to the user's location
-            Marker userMarker = new Marker(mapView);
-            userMarker.setPosition(userLocation);
-            mapView.getOverlays().add(userMarker);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             // Set the default location to London
             IMapController mapController = mapView.getController();
 //        mapController.setZoom(12.0);
             mapView.getController().setZoom(12.0);
             GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
             mapController.setCenter(startPoint);
-
 
 
             //Creating a new marker that is to be used by the user
@@ -380,35 +283,44 @@ public class MainActivity extends AppCompatActivity
             searchPanel = findViewById(R.id.search_panel);
 
             // Retrieve data from Firebase Realtime Database
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
-            ref.addValueEventListener(new ValueEventListener() {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference ref = database.getReference("locations");
+            DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
+            locationsRef.addChildEventListener(new ChildEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    List<VanCameraLocations> locationList = new ArrayList<>();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        String category = snapshot.child("category").getValue(String.class);
-                        double latitude = snapshot.child("latitude").getValue(Double.class);
-                        double longitude = snapshot.child("longitude").getValue(Double.class);
-                        VanCameraLocations location = new VanCameraLocations(category, latitude, longitude);
-                        locationList.add(location);
-                    }
-                    // Display markers on mapview
-                    Drawable markerIcon = getResources().getDrawable(R.drawable.img);
-                    for (VanCameraLocations location : locationList) {
-                        Marker marker = new Marker(mapView);
-                        marker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
-                        marker.setTitle(location.getCategory());
-                        marker.setIcon(markerIcon);
-                        mapView.getOverlayManager().add(marker);
-                    }
+                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                    String name = snapshot.child("Category").getValue(String.class);
+                    double latitude = snapshot.child("latitude").getValue(Double.class);
+                    double longitude = snapshot.child("longitude").getValue(Double.class);
+                    GeoPoint location = new GeoPoint(latitude, longitude);
+                    Marker marker = new Marker(mapView);
+                    marker.setPosition(location);
+                    mapView.getOverlays().add(marker);
+                    mapView.invalidate();
                 }
 
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                    // Handle child updates here
+                }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.e(TAG, "onCancelled", databaseError.toException());
+                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                    // Handle child deletions here
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                    // Handle child movements here
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    // Handle errors here
                 }
             });
+
+
 
 
             // Check if the image button is null
@@ -437,46 +349,78 @@ public class MainActivity extends AppCompatActivity
                 });
             }
 
-//        mapView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_UP) {
-//                    // Get the location of the touch
-//                    GeoPoint touchedPoint = (GeoPoint) mapView.getProjection().fromPixels((int)event.getX(), (int)event.getY());
-//
-//                    // Create the marker
-//                    Marker marker = new Marker(mapView);
-//                    marker.setPosition(touchedPoint);
-//
-//                    // Show the confirmation dialog
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                    builder.setMessage("Add a marker here?");
-//                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int id) {
-//                            // Launch your form activity and pass the latitude and longitude of the clicked position
-//                            Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
-//                            intent.putExtra("latitude", marker.getPosition().getLatitude());
-//                            intent.putExtra("longitude", marker.getPosition().getLongitude());
-//                            startActivity(intent);
-//
-//                        }
-//
-//                    });
-//                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int id) {
-//                            mapView.getOverlays().remove(marker);
-//                        }
-//                    });
-//                    AlertDialog alertDialog = builder.create();
-//                    alertDialog.show();
-//
-//                    // Add the marker to the map
-//                    mapView.getOverlays().add(marker);
-//                    mapView.invalidate();
-//                }
-//                return true;
-//            }
-//        });
+
+            final Handler handler = new Handler();
+            final long LONG_PRESS_TIME = 2000; // in milliseconds
+            final long MARKER_LIFETIME = 30 * 60 * 1000; // in milliseconds (30 minutes)
+            final Marker[] marker = {new Marker(mapView)};
+            ;
+            MotionEvent event = null;
+
+            final Runnable mLongPressed = new Runnable() {
+                public void run() {
+                    // Get the location of the touch
+                    GeoPoint touchedPoint = (GeoPoint) mapView.getProjection().fromPixels((int) event.getX(), (int) event.getY());
+
+                    // Create the marker
+                    marker[0] = new Marker(mapView);
+                    marker[0].setPosition(touchedPoint);
+
+                    // Show the confirmation dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("Add a marker here?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Launch your form activity and pass the latitude and longitude of the clicked position
+                            Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
+                            intent.putExtra("latitude", marker[0].getPosition().getLatitude());
+                            intent.putExtra("longitude", marker[0].getPosition().getLongitude());
+                            startActivity(intent);
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            mapView.getOverlays().remove(marker[0]);
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+
+                    // Add the marker to the map
+                    mapView.getOverlays().add(marker[0]);
+                    mapView.invalidate();
+
+                    // Schedule the marker to be removed after the specified duration
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (marker[0] != null) {
+                                mapView.getOverlays().remove(marker[0]);
+                                mapView.invalidate();
+                            }
+                        }
+                    }, MARKER_LIFETIME);
+                }
+            };
+
+            mapView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            handler.postDelayed(mLongPressed, LONG_PRESS_TIME);
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            handler.removeCallbacks(mLongPressed);
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            handler.removeCallbacks(mLongPressed);
+                            break;
+                    }
+                    return true;
+                }
+            });
+
 
 
             Button searchButton = findViewById(R.id.search_button);
@@ -524,7 +468,15 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
+
+
         }
+
+
+
+
+
 
 
     private void toggleSearchPanel()
