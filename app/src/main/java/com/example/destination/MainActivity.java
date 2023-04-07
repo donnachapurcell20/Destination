@@ -284,6 +284,58 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
+            // Define a location listener
+            LocationListener locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    // This method is called when the user's location changes
+                    // You can update the user's location on the map here
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                    // This method is called when the GPS status changes
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+                    // This method is called when the GPS is turned on
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+                    // This method is called when the GPS is turned off
+                }
+            };
+
+// Check if the app has permission to access the user's location
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted, you can use the method that requires the permission here
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+                //Once you have permission, following code gets the user's current location
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                //Update the user's location on the map
+                GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+                mapView.getController().animateTo(userLocation);
+
+                //The context variable needs to be initialized with a valid Context object
+                Context context = MainActivity.this;
+                // Create a new location overlay
+                MyLocationNewOverlay myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), mapView);
+
+                // Enable the overlay to show the user's location
+                myLocationOverlay.enableMyLocation();
+
+                // Add the overlay to the map view
+                mapView.getOverlays().add(myLocationOverlay);
+            } else {
+                // Permission is not granted, request the permission
+                ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+
             // Get the user's current location
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
@@ -292,6 +344,8 @@ public class MainActivity extends AppCompatActivity
             Marker userMarker = new Marker(mapView);
             userMarker.setPosition(userLocation);
             mapView.getOverlays().add(userMarker);
+
+
 
 
 
