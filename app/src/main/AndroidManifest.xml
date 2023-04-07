@@ -38,7 +38,7 @@
             android:exported="true">
         </activity>
 
-<!--        <activity android:name=".MarkerOnMapActivity" />-->
+        <activity android:name=".MarkerOnMapActivity" />
 
     </application>
 
