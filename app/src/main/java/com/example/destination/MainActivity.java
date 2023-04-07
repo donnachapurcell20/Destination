@@ -76,6 +76,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.osmdroid.util.BoundingBox;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
 import android.Manifest;
 
 
@@ -268,6 +271,19 @@ public class MainActivity extends AppCompatActivity
             mapView.getController().animateTo(userLocation);
 
 
+            //The context variable needs to be initialized with a valid Context object
+            Context context = MainActivity.this;
+            // Create a new location overlay
+            MyLocationNewOverlay myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), mapView);
+
+            // Enable the overlay to show the user's location
+            myLocationOverlay.enableMyLocation();
+
+            // Add the overlay to the map view
+            mapView.getOverlays().add(myLocationOverlay);
+
+
+
 
 
 
@@ -445,6 +461,7 @@ public class MainActivity extends AppCompatActivity
                     return false;
                 }
             });
+
 
 
 
