@@ -124,6 +124,8 @@ public class MainActivity extends AppCompatActivity
     private boolean isNetworkEnabled;
     private static final int PERMISSION_REQUEST_LOCATION = 101;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
+    MotionEvent downEvent = null;
+
 
 
 
@@ -259,16 +261,16 @@ public class MainActivity extends AppCompatActivity
             startEditText = findViewById(R.id.start_point);
             endEditText = findViewById(R.id.end_point);
             mapView.setTileSource(TileSourceFactory.MAPNIK);
-//        mapView.getController().setZoom(10);
-            mapView.setBuiltInZoomControls(true);
+            mapView.getController().setZoom(10);
+//            mapView.setBuiltInZoomControls(true);
             mapView.setMultiTouchControls(true);
             Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
 
             // Set the default location to London
             IMapController mapController = mapView.getController();
-//        mapController.setZoom(12.0);
-            mapView.getController().setZoom(12.0);
+        mapController.setZoom(12.0);
+//            mapView.getController().setZoom(12.0);
             GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
             mapController.setCenter(startPoint);
 
@@ -350,78 +352,6 @@ public class MainActivity extends AppCompatActivity
             }
 
 
-            final Handler handler = new Handler();
-            final long LONG_PRESS_TIME = 2000; // in milliseconds
-            final long MARKER_LIFETIME = 30 * 60 * 1000; // in milliseconds (30 minutes)
-            final Marker[] marker = {new Marker(mapView)};
-            ;
-            MotionEvent event = null;
-
-            final Runnable mLongPressed = new Runnable() {
-                public void run() {
-                    // Get the location of the touch
-                    GeoPoint touchedPoint = (GeoPoint) mapView.getProjection().fromPixels((int) event.getX(), (int) event.getY());
-
-                    // Create the marker
-                    marker[0] = new Marker(mapView);
-                    marker[0].setPosition(touchedPoint);
-
-                    // Show the confirmation dialog
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("Add a marker here?");
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Launch your form activity and pass the latitude and longitude of the clicked position
-                            Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
-                            intent.putExtra("latitude", marker[0].getPosition().getLatitude());
-                            intent.putExtra("longitude", marker[0].getPosition().getLongitude());
-                            startActivity(intent);
-                        }
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            mapView.getOverlays().remove(marker[0]);
-                        }
-                    });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-
-                    // Add the marker to the map
-                    mapView.getOverlays().add(marker[0]);
-                    mapView.invalidate();
-
-                    // Schedule the marker to be removed after the specified duration
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (marker[0] != null) {
-                                mapView.getOverlays().remove(marker[0]);
-                                mapView.invalidate();
-                            }
-                        }
-                    }, MARKER_LIFETIME);
-                }
-            };
-
-            mapView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            handler.postDelayed(mLongPressed, LONG_PRESS_TIME);
-                            break;
-                        case MotionEvent.ACTION_MOVE:
-                            handler.removeCallbacks(mLongPressed);
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            handler.removeCallbacks(mLongPressed);
-                            break;
-                    }
-                    return true;
-                }
-            });
-
-
 
             Button searchButton = findViewById(R.id.search_button);
             searchButton.setOnClickListener(new View.OnClickListener() {
@@ -464,6 +394,85 @@ public class MainActivity extends AppCompatActivity
                     return false;
                 }
             });
+
+            final Handler handler = new Handler();
+            final long LONG_PRESS_TIME = 2000; // in milliseconds
+            final long MARKER_LIFETIME = 30 * 60 * 1000; // in milliseconds (30 minutes)
+            final Marker[] marker = {null};
+            final MotionEvent[] downEvent = {null};
+
+            final Runnable mLongPressed = new Runnable() {
+                public void run() {
+                    // Get the location of the touch
+                    GeoPoint touchedPoint = (GeoPoint) mapView.getProjection().fromPixels((int) downEvent[0].getX(), (int) downEvent[0].getY());
+
+                    // Create the marker
+                    marker[0] = new Marker(mapView);
+                    marker[0].setPosition(touchedPoint);
+
+                    // Show the confirmation dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("Add a marker here?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Launch your form activity and pass the latitude and longitude of the clicked position
+                            GeoPoint markerPosition = marker[0].getPosition();
+                            if (markerPosition != null) {
+                                Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
+                                intent.putExtra("latitude", markerPosition.getLatitude());
+                                intent.putExtra("longitude", markerPosition.getLongitude());
+                                startActivity(intent);
+                            }
+                        }
+
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            mapView.getOverlays().remove(marker[0]);
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+
+                    // Add the marker to the map
+                    mapView.getOverlays().add(marker[0]);
+                    mapView.invalidate();
+
+                    // Schedule the marker to be removed after the specified duration
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (marker[0] != null) {
+                                mapView.getOverlays().remove(marker[0]);
+                                mapView.invalidate();
+                            }
+                        }
+                    }, MARKER_LIFETIME);
+                }
+            };
+
+            mapView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            handler.removeCallbacks(mLongPressed);
+                            downEvent[0] = MotionEvent.obtain(event);
+                            handler.postDelayed(mLongPressed, LONG_PRESS_TIME);
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            if (Math.abs(event.getX() - downEvent[0].getX()) > 10 || Math.abs(event.getY() - downEvent[0].getY()) > 10) {
+                                handler.removeCallbacks(mLongPressed);
+                            }
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            handler.removeCallbacks(mLongPressed);
+                            break;
+                    }
+                    return false;
+                }
+            });
+
 
 
 
