@@ -241,6 +241,37 @@ public class MainActivity extends AppCompatActivity
 //        // Create a Firebase database reference
 //        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("locations");
 
+            // Get the system's LocationManager service
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+// Check if the app has permission to access the user's location
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted, you can use the method that requires the permission here
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+                //Once you have permission, following code gets the user's current location
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                //Update the user's location on the map
+                GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+                mapView.getController().animateTo(userLocation);
+
+                //The context variable needs to be initialized with a valid Context object
+                Context context = MainActivity.this;
+                // Create a new location overlay
+                MyLocationNewOverlay myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), mapView);
+
+                // Enable the overlay to show the user's location
+                myLocationOverlay.enableMyLocation();
+
+                // Add the overlay to the map view
+                mapView.getOverlays().add(myLocationOverlay);
+            } else {
+                // Permission is not granted, request the permission
+                ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+
+
             // Initialize views
             mapView = findViewById(R.id.map);
             startEditText = findViewById(R.id.start_point);
@@ -253,52 +284,26 @@ public class MainActivity extends AppCompatActivity
 
 
 
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                // Permission is granted, you can use the method that requires the permission here
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            } else {
-                // Permission is not granted, request the permission
-                ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-
-
-            //Once you have permission, following code gets the user's current location
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            // Get the user's current location
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-            //Update the user's location on the map
             GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-            mapView.getController().animateTo(userLocation);
 
-
-            //The context variable needs to be initialized with a valid Context object
-            Context context = MainActivity.this;
-            // Create a new location overlay
-            MyLocationNewOverlay myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), mapView);
-
-            // Enable the overlay to show the user's location
-            myLocationOverlay.enableMyLocation();
-
-            // Add the overlay to the map view
-            mapView.getOverlays().add(myLocationOverlay);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            //Add a marker to the user's location
+            // Add a marker to the user's location
             Marker userMarker = new Marker(mapView);
             userMarker.setPosition(userLocation);
             mapView.getOverlays().add(userMarker);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
