@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -33,11 +34,21 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.destination.routing.OSRMRoadManager;
 import com.example.destination.routing.Road;
 import com.example.destination.routing.RoadManager;
 import com.example.destination.routing.RoadNode;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,6 +57,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.mapsforge.BuildConfig;
@@ -62,6 +76,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.osmdroid.util.BoundingBox;
+import android.Manifest;
+
 
 
 
@@ -92,6 +108,8 @@ public class MainActivity extends AppCompatActivity
     private boolean isGPSEnabled;
     private boolean isNetworkEnabled;
     private static final int PERMISSION_REQUEST_LOCATION = 101;
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
+
 
 
 
@@ -210,10 +228,9 @@ public class MainActivity extends AppCompatActivity
 
 
 
-        public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
 
 //        FirebaseDatabase database = FirebaseDatabase.getInstance();
 //        DatabaseReference myRef = database.getReference("locations");
@@ -221,93 +238,129 @@ public class MainActivity extends AppCompatActivity
 //        // Create a Firebase database reference
 //        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("locations");
 
-        // Initialize views
-        mapView = findViewById(R.id.map);
-        startEditText = findViewById(R.id.start_point);
-        endEditText = findViewById(R.id.end_point);
-        mapView.setTileSource(TileSourceFactory.MAPNIK);
+            // Initialize views
+            mapView = findViewById(R.id.map);
+            startEditText = findViewById(R.id.start_point);
+            endEditText = findViewById(R.id.end_point);
+            mapView.setTileSource(TileSourceFactory.MAPNIK);
 //        mapView.getController().setZoom(10);
-        mapView.setBuiltInZoomControls(true);
-        mapView.setMultiTouchControls(true);
-        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+            mapView.setBuiltInZoomControls(true);
+            mapView.setMultiTouchControls(true);
+            Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
 
-        // Set the default location to London
-        IMapController mapController = mapView.getController();
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted, you can use the method that requires the permission here
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            } else {
+                // Permission is not granted, request the permission
+                ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+
+
+            //Once you have permission, following code gets the user's current location
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            //Update the user's location on the map
+            GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+            mapView.getController().animateTo(userLocation);
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //Add a marker to the user's location
+            Marker userMarker = new Marker(mapView);
+            userMarker.setPosition(userLocation);
+            mapView.getOverlays().add(userMarker);
+
+
+
+            // Set the default location to London
+            IMapController mapController = mapView.getController();
 //        mapController.setZoom(12.0);
-        mapView.getController().setZoom(12.0);
-        GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
-        mapController.setCenter(startPoint);
+            mapView.getController().setZoom(12.0);
+            GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
+            mapController.setCenter(startPoint);
 
 
 
+            //Creating a new marker that is to be used by the user
+            marker = new Marker(mapView);
+            marker.setIcon(getResources().getDrawable(R.drawable.ic_marker));
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
-        //Creating a new marker that is to be used by the user
-        marker = new Marker(mapView);
-        marker.setIcon(getResources().getDrawable(R.drawable.ic_marker));
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            // Find the expand button in your layout
+            ImageButton expandButton = findViewById(R.id.image_button);
+            searchPanel = findViewById(R.id.search_panel);
 
-        // Find the expand button in your layout
-        ImageButton expandButton = findViewById(R.id.image_button);
-        searchPanel = findViewById(R.id.search_panel);
-
-        // Retrieve data from Firebase Realtime Database
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<VanCameraLocations> locationList = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String category = snapshot.child("category").getValue(String.class);
-                    double latitude = snapshot.child("latitude").getValue(Double.class);
-                    double longitude = snapshot.child("longitude").getValue(Double.class);
-                    VanCameraLocations location = new VanCameraLocations(category, latitude, longitude);
-                    locationList.add(location);
-                }
-                // Display markers on mapview
-                Drawable markerIcon = getResources().getDrawable(R.drawable.img);
-                for (VanCameraLocations location : locationList) {
-                    Marker marker = new Marker(mapView);
-                    marker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
-                    marker.setTitle(location.getCategory());
-                    marker.setIcon(markerIcon);
-                    mapView.getOverlayManager().add(marker);
-                }
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "onCancelled", databaseError.toException());
-            }
-        });
-
-
-        // Check if the image button is null
-        if (expandButton != null) {
-            // Set the click listener for the expand button
-            expandButton.setOnClickListener(new View.OnClickListener() {
+            // Retrieve data from Firebase Realtime Database
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
+            ref.addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onClick(View v) {
-                    // Toggle the visibility of the search panel
-                    if (searchPanel.getVisibility() == View.VISIBLE) {
-                        searchPanel.setVisibility(View.GONE);
-                        expandButton.setImageResource(R.drawable.ic_baseline_expand_more_24);
-                    } else {
-                        searchPanel.setVisibility(View.VISIBLE);
-                        expandButton.setImageResource(R.drawable.ic_baseline_expand_less_24);
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    List<VanCameraLocations> locationList = new ArrayList<>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String category = snapshot.child("category").getValue(String.class);
+                        double latitude = snapshot.child("latitude").getValue(Double.class);
+                        double longitude = snapshot.child("longitude").getValue(Double.class);
+                        VanCameraLocations location = new VanCameraLocations(category, latitude, longitude);
+                        locationList.add(location);
                     }
-                    // Adjust the layout params of the map view to fill the remaining space
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mapView.getLayoutParams();
-                    if (searchPanel.getVisibility() == View.VISIBLE) {
-                        params.addRule(RelativeLayout.BELOW, R.id.search_panel);
-                    } else {
-                        params.addRule(RelativeLayout.BELOW, 0);
+                    // Display markers on mapview
+                    Drawable markerIcon = getResources().getDrawable(R.drawable.img);
+                    for (VanCameraLocations location : locationList) {
+                        Marker marker = new Marker(mapView);
+                        marker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
+                        marker.setTitle(location.getCategory());
+                        marker.setIcon(markerIcon);
+                        mapView.getOverlayManager().add(marker);
                     }
-                    mapView.setLayoutParams(params);
+                }
+
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "onCancelled", databaseError.toException());
                 }
             });
-        }
+
+
+            // Check if the image button is null
+            if (expandButton != null) {
+                // Set the click listener for the expand button
+                expandButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Toggle the visibility of the search panel
+                        if (searchPanel.getVisibility() == View.VISIBLE) {
+                            searchPanel.setVisibility(View.GONE);
+                            expandButton.setImageResource(R.drawable.ic_baseline_expand_more_24);
+                        } else {
+                            searchPanel.setVisibility(View.VISIBLE);
+                            expandButton.setImageResource(R.drawable.ic_baseline_expand_less_24);
+                        }
+                        // Adjust the layout params of the map view to fill the remaining space
+                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mapView.getLayoutParams();
+                        if (searchPanel.getVisibility() == View.VISIBLE) {
+                            params.addRule(RelativeLayout.BELOW, R.id.search_panel);
+                        } else {
+                            params.addRule(RelativeLayout.BELOW, 0);
+                        }
+                        mapView.setLayoutParams(params);
+                    }
+                });
+            }
 
 //        mapView.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
@@ -351,48 +404,52 @@ public class MainActivity extends AppCompatActivity
 //        });
 
 
-        Button searchButton = findViewById(R.id.search_button);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                // Hide the keyboard
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
-                // Start the search task
-                String startLocation = startEditText.getText().toString();
-                String endLocation = endEditText.getText().toString();
-                //new SearchTask().execute(startLocation, endLocation);
-                new GeocoderTask().execute(startLocation, endLocation);
-
-
-            }
-        });
-        startEditText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    startEditText.requestFocus();
+            Button searchButton = findViewById(R.id.search_button);
+            searchButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    // Hide the keyboard
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(startEditText, InputMethodManager.SHOW_IMPLICIT);
-                    return true;
-                }
-                return false;
-            }
-        });
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-        endEditText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    endEditText.requestFocus();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(endEditText, InputMethodManager.SHOW_IMPLICIT);
-                    return true;
+                    // Start the search task
+                    String startLocation = startEditText.getText().toString();
+                    String endLocation = endEditText.getText().toString();
+                    //new SearchTask().execute(startLocation, endLocation);
+                    new GeocoderTask().execute(startLocation, endLocation);
+
+
                 }
-                return false;
-            }
-        });
-    }
+            });
+            startEditText.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        startEditText.requestFocus();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(startEditText, InputMethodManager.SHOW_IMPLICIT);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            endEditText.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        endEditText.requestFocus();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(endEditText, InputMethodManager.SHOW_IMPLICIT);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+
+
+        }
+
 
     private void toggleSearchPanel()
     {
@@ -425,6 +482,8 @@ public class MainActivity extends AppCompatActivity
             mapView.setLayoutParams(params);
         }
     }
+
+
 
 
 
