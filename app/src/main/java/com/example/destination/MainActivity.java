@@ -61,6 +61,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.osmdroid.util.BoundingBox;
+
 
 
 public class MainActivity extends AppCompatActivity
@@ -87,11 +89,15 @@ public class MainActivity extends AppCompatActivity
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+    private boolean isGPSEnabled;
+    private boolean isNetworkEnabled;
+    private static final int PERMISSION_REQUEST_LOCATION = 101;
 
 
 
 
-    private class SearchTask extends AsyncTask<String, Void, Road> {
+
+    private class GeocoderTask extends AsyncTask<String, Void, Road> {
 
         private ProgressDialog progressDialog;
 
@@ -161,9 +167,6 @@ public class MainActivity extends AppCompatActivity
                         case RoadNode.MANEUVER_TURN_LEFT:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_left));
                             break;
-                        case RoadNode.MANEUVER_TURN_RIGHT:
-                            nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_turn_right));
-                            break;
                         case RoadNode.MANEUVER_STRAIGHT:
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
                             break;
@@ -188,8 +191,9 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 // Zoom to the bounds of the route
-                BoundingBoxE6 routeBounds = roadOverlay.getBounds();
-                mapView.zoomToBoundingBox(routeBounds);
+                BoundingBox routeBounds = roadOverlay.getBounds();
+                mapView.zoomToBoundingBox(routeBounds, true);
+
 
                 // Center the map on the starting point of the route
                 GeoPoint startPoint = road.mNodes.get(0).mLocation;
@@ -199,6 +203,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, "Unable to calculate route.", Toast.LENGTH_SHORT).show();
             }
         }
+    }
 
 
 
@@ -220,12 +225,15 @@ public class MainActivity extends AppCompatActivity
         startEditText = findViewById(R.id.start_point);
         endEditText = findViewById(R.id.end_point);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
-        mapView.getController().setZoom(10);
+//        mapView.getController().setZoom(10);
+        mapView.setBuiltInZoomControls(true);
+        mapView.setMultiTouchControls(true);
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
         // Set the default location to London
         IMapController mapController = mapView.getController();
-        mapController.setZoom(12.0);
+//        mapController.setZoom(12.0);
+        mapView.getController().setZoom(12.0);
         GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
         mapController.setCenter(startPoint);
 
@@ -258,69 +266,16 @@ public class MainActivity extends AppCompatActivity
                     marker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
                     marker.setTitle(location.getCategory());
                     marker.setIcon(markerIcon);
-                    mapView.getOverlays().add(marker);
+                    mapView.getOverlayManager().add(marker);
                 }
             }
+
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e(TAG, "onCancelled", databaseError.toException());
             }
         });
-
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                // Update user's location on the map
-                GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                marker.setPosition(geoPoint);
-                mapView.getController().animateTo(geoPoint);
-
-                // Calculate distance to the next direction
-                double distance = calculateDistanceToNextDirection(location);
-                // Show distance on the UI
-                TextView distanceTextView = findViewById(R.id.distance_text_view);
-                distanceTextView.setText(String.format("%.2f km", distance / 1000));
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            @Override
-            public void onProviderEnabled(String provider) {}
-
-            @Override
-            public void onProviderDisabled(String provider) {}
-        };
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        }
-
-        @Override
-        public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISSIONS_REQUEST_LOCATION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // Request location updates from the GPS sensor
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            }
-        }
-    }
-        private double calculateDistanceToNextDirection(Location location) {
-        // TODO: Implement this method
-        return 0;
-    }
-
-
-
-
-
-
-
-
 
 
         // Check if the image button is null
@@ -401,7 +356,9 @@ public class MainActivity extends AppCompatActivity
                 // Start the search task
                 String startLocation = startEditText.getText().toString();
                 String endLocation = endEditText.getText().toString();
-                new SearchTask().execute(startLocation, endLocation);
+                //new SearchTask().execute(startLocation, endLocation);
+                new GeocoderTask().execute(startLocation, endLocation);
+
 
             }
         });

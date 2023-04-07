@@ -1,5 +1,6 @@
 package com.example.destination.routing;
 
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -18,7 +19,7 @@ public class RoadNode implements Parcelable {
 //	public static final int MANEUVER_UTURN_RIGHT = 9;
 	public static final int MANEUVER_RIGHT = 4;
 	public static final int MANEUVER_LEFT = 3;
-//	public static final int MANEUVER_ROUNDABOUT = 4;
+	public static final int MANEUVER_ROUNDABOUT = 5;
 
 	public int mManeuverType;
 	public String mInstructions;
@@ -26,6 +27,9 @@ public class RoadNode implements Parcelable {
 	public double mLength;
 	public double mDuration;
 	public GeoPoint mLocation;
+
+	public Location myLocation;
+	private int mIndex;
 
 	public RoadNode() {
 		mManeuverType = MANEUVER_UNKNOWN;
@@ -70,5 +74,16 @@ public class RoadNode implements Parcelable {
 		mDuration = in.readDouble();
 		mLocation = in.readParcelable(GeoPoint.class.getClassLoader());
 	}
+
+	public int getIndex() {
+		return mIndex;
+	}
+
+	public void setIndex(int index) {
+		mIndex = index;
+	}
+
+
+
 }
 

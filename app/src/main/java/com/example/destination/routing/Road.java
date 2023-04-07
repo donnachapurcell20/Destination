@@ -1,6 +1,7 @@
 package com.example.destination.routing;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -50,7 +51,11 @@ public class Road implements Parcelable {
 	public static final int STATUS_INVALID=-1;
 	public static final int STATUS_OK=0;
 	public static final int STATUS_TECHNICAL_ISSUE=2;
-	
+
+	private Road mRoad;
+	private int mIndex;
+
+
 	private void init(){
 		mStatus = STATUS_INVALID;
 		mLength = 0.0;
