@@ -14,6 +14,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+//import android.location.LocationRequest;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,6 +49,10 @@ import com.example.destination.routing.OSRMRoadManager;
 import com.example.destination.routing.Road;
 import com.example.destination.routing.RoadManager;
 import com.example.destination.routing.RoadNode;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -90,6 +95,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.gms.location.LocationRequest;
+
 
 import org.osmdroid.views.overlay.Marker;
 
@@ -122,6 +129,12 @@ public class MainActivity extends AppCompatActivity {
     private boolean isGPSEnabled;
     private boolean isNetworkEnabled;
     private static final int PERMISSIONS_REQUEST_LOCATION = 100;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+
+    private LocationRequest mLocationRequest;
+    private LocationCallback mLocationCallback;
+    private FusedLocationProviderClient mFusedLocationClient;
+
     MotionEvent downEvent = null;
 
 
@@ -129,11 +142,14 @@ public class MainActivity extends AppCompatActivity {
 
         private ProgressDialog progressDialog;
 
+
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             progressDialog = ProgressDialog.show(MainActivity.this, "", "Searching route...");
         }
+
 
         @Override
         protected Road doInBackground(String... locations) {
@@ -172,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
+
 
         @Override
         protected void onPostExecute(Road road) {
@@ -234,15 +251,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // set the user agent for OsmDroid
+        Configuration.getInstance().setUserAgentValue(BuildConfig.LIBRARY_PACKAGE_NAME);
+
+
 
 //        FirebaseDatabase database = FirebaseDatabase.getInstance();
 //        DatabaseReference myRef = database.getReference("locations");
 //
 //        // Create a Firebase database reference
 //        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("locations");
+
+
+        // Initialize location request
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(2000);
+
+        // Initialize location callback
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    // Update UI with location data
+                }
+            }
+        };
+
+        // Get FusedLocationProviderClient instance
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
 
 
         // Initialize views
@@ -253,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
         mapView.getController().setZoom(10);
 //            mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
-        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
 
         // Set the default location to London
@@ -469,59 +515,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Check if the app has permission to access the device's location
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // If not, request permission from the user
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
-        } else {
-            // If permission is granted, get the user's location
-            getLocation();
-        }
+
+
+
+
 
     }
-
-    //Gets the user's location using the LocationManager
-    private void getLocation() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (location != null) {
-            // Use the location
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-            // ...
-        } else {
-            // Location not available
-            // ...
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSIONS_REQUEST_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, get the user's location
-                getLocation();
-            } else {
-                // Permission denied
-                // ...
-            }
-        }
-    }
-
-
-
 
 
 
@@ -558,6 +557,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Request location updates
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+        } else {
+            // Request location permission
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Remove location updates
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
+
+
 
 
 
@@ -575,4 +597,28 @@ public class MainActivity extends AppCompatActivity {
 
         super.onPause();
     }
+
+    private void requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // permission was granted, do your location-related task
+                // for example, start getting the user's location
+            } else {
+                // permission denied, show a message to the user and disable location functionality
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    }
+
+
 }

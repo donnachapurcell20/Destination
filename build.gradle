@@ -4,6 +4,10 @@ buildscript {
     repositories {
         google() // Google's Maven repository
         mavenCentral() // Maven Central repository
+        maven { url "https://repo.osmdroid.org/repository/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://dl.bintray.com/osmdroid/maven" }
+        maven { url "https://repo1.maven.org/maven2/" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.4.2'
