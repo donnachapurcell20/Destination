@@ -292,8 +292,18 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     String name = snapshot.child("Category").getValue(String.class);
-                    double latitude = snapshot.child("latitude").getValue(Double.class);
-                    double longitude = snapshot.child("longitude").getValue(Double.class);
+                    Double latitudeDouble = snapshot.child("latitude").getValue(Double.class);
+                    double latitude = 0.0; // default value
+                    if (latitudeDouble != null) {
+                        latitude = latitudeDouble.doubleValue();
+                    }
+
+                    Double longitudeDouble = snapshot.child("longitude").getValue(Double.class);
+                    double longitude = 0.0; // default value
+                    if (latitudeDouble != null) {
+                        longitude = longitudeDouble.doubleValue();
+                    }
+
                     GeoPoint location = new GeoPoint(latitude, longitude);
                     Marker marker = new Marker(mapView);
                     marker.setPosition(location);

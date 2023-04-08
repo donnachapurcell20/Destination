@@ -45,15 +45,17 @@ public class MarkerOnMapActivity extends AppCompatActivity {
         String category = spinnercategories.getSelectedItem().toString();
 
         // Get the longitude and latitude from the TextViews
-        double longitude = Double.parseDouble(longitudeTextView.getText().toString());
         double latitude = Double.parseDouble(latitudeTextView.getText().toString());
+        double longitude = Double.parseDouble(longitudeTextView.getText().toString());
+
 
         // Create a new Firebase database reference for the data you want to store
-        DatabaseReference markerRef = mDatabase.child("your_node_name").push();
-
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference markerRef = database.getReference("locations");
         // Set the values for the new marker
         markerRef.child("category").setValue(category);
-        markerRef.child("longitude").setValue(longitude);
         markerRef.child("latitude").setValue(latitude);
+        markerRef.child("longitude").setValue(longitude);
+
     }
 }
