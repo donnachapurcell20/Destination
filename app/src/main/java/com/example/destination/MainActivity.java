@@ -1,7 +1,6 @@
 package com.example.destination;
 
 
-
 import static android.content.ContentValues.TAG;
 
 import android.app.ProgressDialog;
@@ -81,23 +80,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
 import org.osmdroid.views.overlay.Marker;
 
 import android.Manifest;
 
 
-
-
-public class MainActivity extends AppCompatActivity
-{
+public class MainActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     FirebaseFirestore firebaseFirestore;
     private Spinner categorySpinner;
@@ -122,15 +121,8 @@ public class MainActivity extends AppCompatActivity
 
     private boolean isGPSEnabled;
     private boolean isNetworkEnabled;
-    private static final int PERMISSION_REQUEST_LOCATION = 101;
-    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
+    private static final int PERMISSIONS_REQUEST_LOCATION = 100;
     MotionEvent downEvent = null;
-
-
-
-
-
-
 
 
     private class GeocoderTask extends AsyncTask<String, Void, Road> {
@@ -242,12 +234,9 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
-
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
 //        FirebaseDatabase database = FirebaseDatabase.getInstance();
 //        DatabaseReference myRef = database.getReference("locations");
@@ -256,241 +245,280 @@ public class MainActivity extends AppCompatActivity
 //        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("locations");
 
 
-            // Initialize views
-            mapView = findViewById(R.id.map);
-            startEditText = findViewById(R.id.start_point);
-            endEditText = findViewById(R.id.end_point);
-            mapView.setTileSource(TileSourceFactory.MAPNIK);
-            mapView.getController().setZoom(10);
+        // Initialize views
+        mapView = findViewById(R.id.map);
+        startEditText = findViewById(R.id.start_point);
+        endEditText = findViewById(R.id.end_point);
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
+        mapView.getController().setZoom(10);
 //            mapView.setBuiltInZoomControls(true);
-            mapView.setMultiTouchControls(true);
-            Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+        mapView.setMultiTouchControls(true);
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
 
-            // Set the default location to London
-            IMapController mapController = mapView.getController();
+        // Set the default location to London
+        IMapController mapController = mapView.getController();
         mapController.setZoom(12.0);
 //            mapView.getController().setZoom(12.0);
-            GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
-            mapController.setCenter(startPoint);
+        GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
+        mapController.setCenter(startPoint);
 
 
-            //Creating a new marker that is to be used by the user
-            marker = new Marker(mapView);
-            marker.setIcon(getResources().getDrawable(R.drawable.ic_marker));
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        //Creating a new marker that is to be used by the user
+        marker = new Marker(mapView);
+        marker.setIcon(getResources().getDrawable(R.drawable.ic_marker));
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
-            // Find the expand button in your layout
-            ImageButton expandButton = findViewById(R.id.image_button);
-            searchPanel = findViewById(R.id.search_panel);
+        // Find the expand button in your layout
+        ImageButton expandButton = findViewById(R.id.image_button);
+        searchPanel = findViewById(R.id.search_panel);
 
-            // Retrieve data from Firebase Realtime Database
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference ref = database.getReference("locations");
-            DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
-            locationsRef.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    String name = snapshot.child("Category").getValue(String.class);
-                    Double latitudeDouble = snapshot.child("latitude").getValue(Double.class);
-                    double latitude = 0.0; // default value
-                    if (latitudeDouble != null) {
-                        latitude = latitudeDouble.doubleValue();
-                    }
-
-                    Double longitudeDouble = snapshot.child("longitude").getValue(Double.class);
-                    double longitude = 0.0; // default value
-                    if (latitudeDouble != null) {
-                        longitude = longitudeDouble.doubleValue();
-                    }
-
-                    GeoPoint location = new GeoPoint(latitude, longitude);
-                    Marker marker = new Marker(mapView);
-                    marker.setPosition(location);
-                    mapView.getOverlays().add(marker);
-                    mapView.invalidate();
+        // Retrieve data from Firebase Realtime Database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("locations");
+        DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
+        locationsRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                String name = snapshot.child("Category").getValue(String.class);
+                Double latitudeDouble = snapshot.child("latitude").getValue(Double.class);
+                double latitude = 0.0; // default value
+                if (latitudeDouble != null) {
+                    latitude = latitudeDouble.doubleValue();
                 }
 
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    // Handle child updates here
+                Double longitudeDouble = snapshot.child("longitude").getValue(Double.class);
+                double longitude = 0.0; // default value
+                if (latitudeDouble != null) {
+                    longitude = longitudeDouble.doubleValue();
                 }
 
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                    // Handle child deletions here
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    // Handle child movements here
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    // Handle errors here
-                }
-            });
-
-
-
-
-            // Check if the image button is null
-            if (expandButton != null) {
-                // Set the click listener for the expand button
-                expandButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Toggle the visibility of the search panel
-                        if (searchPanel.getVisibility() == View.VISIBLE) {
-                            searchPanel.setVisibility(View.GONE);
-                            expandButton.setImageResource(R.drawable.ic_baseline_expand_more_24);
-                        } else {
-                            searchPanel.setVisibility(View.VISIBLE);
-                            expandButton.setImageResource(R.drawable.ic_baseline_expand_less_24);
-                        }
-                        // Adjust the layout params of the map view to fill the remaining space
-                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mapView.getLayoutParams();
-                        if (searchPanel.getVisibility() == View.VISIBLE) {
-                            params.addRule(RelativeLayout.BELOW, R.id.search_panel);
-                        } else {
-                            params.addRule(RelativeLayout.BELOW, 0);
-                        }
-                        mapView.setLayoutParams(params);
-                    }
-                });
+                GeoPoint location = new GeoPoint(latitude, longitude);
+                Marker marker = new Marker(mapView);
+                marker.setPosition(location);
+                mapView.getOverlays().add(marker);
+                mapView.invalidate();
             }
 
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                // Handle child updates here
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                // Handle child deletions here
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                // Handle child movements here
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle errors here
+            }
+        });
 
 
-            Button searchButton = findViewById(R.id.search_button);
-            searchButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    // Hide the keyboard
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
-                    // Start the search task
-                    String startLocation = startEditText.getText().toString();
-                    String endLocation = endEditText.getText().toString();
-                    //new SearchTask().execute(startLocation, endLocation);
-                    new GeocoderTask().execute(startLocation, endLocation);
-
-
-                }
-            });
-            startEditText.setOnTouchListener(new View.OnTouchListener() {
+        // Check if the image button is null
+        if (expandButton != null) {
+            // Set the click listener for the expand button
+            expandButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        startEditText.requestFocus();
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.showSoftInput(startEditText, InputMethodManager.SHOW_IMPLICIT);
-                        return true;
+                public void onClick(View v) {
+                    // Toggle the visibility of the search panel
+                    if (searchPanel.getVisibility() == View.VISIBLE) {
+                        searchPanel.setVisibility(View.GONE);
+                        expandButton.setImageResource(R.drawable.ic_baseline_expand_more_24);
+                    } else {
+                        searchPanel.setVisibility(View.VISIBLE);
+                        expandButton.setImageResource(R.drawable.ic_baseline_expand_less_24);
                     }
-                    return false;
+                    // Adjust the layout params of the map view to fill the remaining space
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mapView.getLayoutParams();
+                    if (searchPanel.getVisibility() == View.VISIBLE) {
+                        params.addRule(RelativeLayout.BELOW, R.id.search_panel);
+                    } else {
+                        params.addRule(RelativeLayout.BELOW, 0);
+                    }
+                    mapView.setLayoutParams(params);
                 }
             });
-
-            endEditText.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        endEditText.requestFocus();
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.showSoftInput(endEditText, InputMethodManager.SHOW_IMPLICIT);
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-            final Handler handler = new Handler();
-            final long LONG_PRESS_TIME = 2000; // in milliseconds
-            final long MARKER_LIFETIME = 30 * 60 * 1000; // in milliseconds (30 minutes)
-            final Marker[] marker = {null};
-            final MotionEvent[] downEvent = {null};
-
-            final Runnable mLongPressed = new Runnable() {
-                public void run() {
-                    // Get the location of the touch
-                    GeoPoint touchedPoint = (GeoPoint) mapView.getProjection().fromPixels((int) downEvent[0].getX(), (int) downEvent[0].getY());
-
-                    // Create the marker
-                    marker[0] = new Marker(mapView);
-                    marker[0].setPosition(touchedPoint);
-
-                    // Show the confirmation dialog
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("Add a marker here?");
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Launch your form activity and pass the latitude and longitude of the clicked position
-                            GeoPoint markerPosition = marker[0].getPosition();
-                            if (markerPosition != null) {
-                                Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
-                                intent.putExtra("latitude", markerPosition.getLatitude());
-                                intent.putExtra("longitude", markerPosition.getLongitude());
-                                startActivity(intent);
-                            }
-                        }
-
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            mapView.getOverlays().remove(marker[0]);
-                        }
-                    });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-
-                    // Add the marker to the map
-                    mapView.getOverlays().add(marker[0]);
-                    mapView.invalidate();
-
-                    // Schedule the marker to be removed after the specified duration
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (marker[0] != null) {
-                                mapView.getOverlays().remove(marker[0]);
-                                mapView.invalidate();
-                            }
-                        }
-                    }, MARKER_LIFETIME);
-                }
-            };
-
-            mapView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            handler.removeCallbacks(mLongPressed);
-                            downEvent[0] = MotionEvent.obtain(event);
-                            handler.postDelayed(mLongPressed, LONG_PRESS_TIME);
-                            break;
-                        case MotionEvent.ACTION_MOVE:
-                            if (Math.abs(event.getX() - downEvent[0].getX()) > 10 || Math.abs(event.getY() - downEvent[0].getY()) > 10) {
-                                handler.removeCallbacks(mLongPressed);
-                            }
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            handler.removeCallbacks(mLongPressed);
-                            break;
-                    }
-                    return false;
-                }
-            });
-
-
-
-
-
-
-
-
         }
+
+
+        Button searchButton = findViewById(R.id.search_button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                // Hide the keyboard
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+                // Start the search task
+                String startLocation = startEditText.getText().toString();
+                String endLocation = endEditText.getText().toString();
+                //new SearchTask().execute(startLocation, endLocation);
+                new GeocoderTask().execute(startLocation, endLocation);
+
+
+            }
+        });
+        startEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    startEditText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(startEditText, InputMethodManager.SHOW_IMPLICIT);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        endEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    endEditText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(endEditText, InputMethodManager.SHOW_IMPLICIT);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        final Handler handler = new Handler();
+        final long LONG_PRESS_TIME = 2000; // in milliseconds
+        final long MARKER_LIFETIME = 30 * 60 * 1000; // in milliseconds (30 minutes)
+        final Marker[] marker = {null};
+        final MotionEvent[] downEvent = {null};
+
+        final Runnable mLongPressed = new Runnable() {
+            public void run() {
+                // Get the location of the touch
+                GeoPoint touchedPoint = (GeoPoint) mapView.getProjection().fromPixels((int) downEvent[0].getX(), (int) downEvent[0].getY());
+
+                // Create the marker
+                marker[0] = new Marker(mapView);
+                marker[0].setPosition(touchedPoint);
+
+                // Show the confirmation dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage("Add a marker here?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Launch your form activity and pass the latitude and longitude of the clicked position
+                        GeoPoint markerPosition = marker[0].getPosition();
+                        if (markerPosition != null) {
+                            Intent intent = new Intent(MainActivity.this, MarkerOnMapActivity.class);
+                            intent.putExtra("latitude", markerPosition.getLatitude());
+                            intent.putExtra("longitude", markerPosition.getLongitude());
+                            startActivity(intent);
+                        }
+                    }
+
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mapView.getOverlays().remove(marker[0]);
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+
+                // Add the marker to the map
+                mapView.getOverlays().add(marker[0]);
+                mapView.invalidate();
+
+                // Schedule the marker to be removed after the specified duration
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (marker[0] != null) {
+                            mapView.getOverlays().remove(marker[0]);
+                            mapView.invalidate();
+                        }
+                    }
+                }, MARKER_LIFETIME);
+            }
+        };
+
+        mapView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        handler.removeCallbacks(mLongPressed);
+                        downEvent[0] = MotionEvent.obtain(event);
+                        handler.postDelayed(mLongPressed, LONG_PRESS_TIME);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if (Math.abs(event.getX() - downEvent[0].getX()) > 10 || Math.abs(event.getY() - downEvent[0].getY()) > 10) {
+                            handler.removeCallbacks(mLongPressed);
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        handler.removeCallbacks(mLongPressed);
+                        break;
+                }
+                return false;
+            }
+        });
+
+        // Check if the app has permission to access the device's location
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // If not, request permission from the user
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
+        } else {
+            // If permission is granted, get the user's location
+            getLocation();
+        }
+
+    }
+
+    //Gets the user's location using the LocationManager
+    private void getLocation() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location != null) {
+            // Use the location
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            // ...
+        } else {
+            // Location not available
+            // ...
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSIONS_REQUEST_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, get the user's location
+                getLocation();
+            } else {
+                // Permission denied
+                // ...
+            }
+        }
+    }
 
 
 
