@@ -37,6 +37,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
@@ -103,7 +105,7 @@ import org.osmdroid.views.overlay.Marker;
 import android.Manifest;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LocationListener {
     FirebaseDatabase firebaseDatabase;
     FirebaseFirestore firebaseFirestore;
     private Spinner categorySpinner;
@@ -122,27 +124,32 @@ public class MainActivity extends AppCompatActivity {
     private EditText longitudeEditText;
     private LinearLayout searchPanel;
     private ImageButton imageButton;
-    private Button launchFormButton;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
-
-    private boolean isGPSEnabled;
-    private boolean isNetworkEnabled;
-    private static final int PERMISSIONS_REQUEST_LOCATION = 100;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-
-    private LocationRequest mLocationRequest;
-    private LocationCallback mLocationCallback;
-    private FusedLocationProviderClient mFusedLocationClient;
-
     MotionEvent downEvent = null;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private List<GeoPoint> waypoints;
+    private LocationManager locationManager;
+    private Location lastLocation;
+    private Polyline roadOverlay;
+    private int[] distances = {500, 400, 300, 200, 100, 50};
+    private int currentDistanceIndex = 0;
+    private boolean isDirectionNotified = false;
+    // Define a global variable for the user's location
+    private Location userLocation;
+
+    // Declare the location provider and overlay
+    MyLocationNewOverlay locationOverlay;
+    GpsMyLocationProvider provider;
+    // declare nextPoint as a member variable
+    private GeoPoint nextPoint;
+    private TextView countdownTextBox;
+
+
+
 
 
     private class GeocoderTask extends AsyncTask<String, Void, Road> {
 
         private ProgressDialog progressDialog;
-
-
 
         @Override
         protected void onPreExecute() {
@@ -251,45 +258,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Location nextPointLocation = new Location("nextPoint");
+
+        TextView countdownTextBox = findViewById(R.id.countdownTextBox);
+
+
+
+
 
         // set the user agent for OsmDroid
         Configuration.getInstance().setUserAgentValue(BuildConfig.LIBRARY_PACKAGE_NAME);
-
-
 
 //        FirebaseDatabase database = FirebaseDatabase.getInstance();
 //        DatabaseReference myRef = database.getReference("locations");
 //
 //        // Create a Firebase database reference
 //        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("locations");
-
-
-        // Initialize location request
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(5000);
-        mLocationRequest.setFastestInterval(2000);
-
-        // Initialize location callback
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    // Update UI with location data
-                }
-            }
-        };
-
-        // Get FusedLocationProviderClient instance
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
 
 
         // Initialize views
@@ -308,6 +295,13 @@ public class MainActivity extends AppCompatActivity {
 //            mapView.getController().setZoom(12.0);
         GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
         mapController.setCenter(startPoint);
+
+        // Initialize the location provider and overlay
+        provider = new GpsMyLocationProvider(this);
+        provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
+        locationOverlay = new MyLocationNewOverlay(provider, mapView);
+        locationOverlay.enableFollowLocation();
+        mapView.getOverlays().add(locationOverlay);
 
 
         //Creating a new marker that is to be used by the user
@@ -516,11 +510,193 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
     }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        // Check user's distance from speed van locations at specified distances
+        DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
+        locationsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Location vanLocation = new Location("");
+                    vanLocation.setLatitude((Double) snapshot.child("latitude").getValue());
+                    vanLocation.setLongitude((Double) snapshot.child("longitude").getValue());
+
+                    float distance = location.distanceTo(vanLocation);
+
+                    if (distance <= 450 && distance > 400) {
+                        showDialog("You are 450 meters from a speed van location");
+                    } else if (distance <= 350 && distance > 300) {
+                        showDialog("You are 350 meters from a speed van location");
+                    } else if (distance <= 250 && distance > 200) {
+                        showDialog("You are 250 meters from a speed van location");
+                    } else if (distance <= 150 && distance > 100) {
+                        showDialog("You are 150 meters from a speed van location");
+                    } else if (distance <= 25) {
+                        showDialog("You are 25 meters from a speed van location");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+            }
+        });
+
+        // Update countdown timer
+        countdownTimer.updateCountdownText(countdownTextBox);
+    }
+
+    private void showDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+
+    private void updateCountdownText(String countdownText) { // corrected method signature
+        // Set countdown text in the textbox
+        countdownTextBox.setText(countdownText);
+    }
+
+    private Handler handler = new Handler();
+    private Runnable updateTextRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // Get user's current location from lastLocation
+            GeoPoint userLocation = new GeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude());
+
+            // Calculate distance to next point
+            double distance = userLocation.distanceToAsDouble(nextPoint);
+
+            // Convert distance to text
+            String distanceText = getDistanceText(distance);
+
+            // Calculate direction to next point
+            double bearing = userLocation.bearingTo(nextPoint);
+
+            // Convert bearing to text
+            String directionText = getDirectionText(bearing);
+
+            // Update text view with distance and direction
+            String message = "Turn " + directionText + " in " + distanceText;
+            countdownTextBox.setText(message);
+
+
+
+            // Schedule next update in 1 second
+            if (distance > 50) {
+                handler.postDelayed(this, 1000);
+            } else {
+                countdownTextBox.setText("Turn " + directionText + " now!");
+            }
+        }
+    };
+
+    private String getCountdownText(double distance) {
+        if (distance >= 500) {
+            return "Turn left in 500 meters";
+        } else if (distance >= 400) {
+            return "Turn left in 400 meters";
+        } else if (distance >= 300) {
+            return "Turn left in 300 meters";
+        } else if (distance >= 200) {
+            return "Turn left in 200 meters";
+        } else if (distance >= 100) {
+            return "Turn left in 100 meters";
+        } else if (distance >= 50) {
+            return "Turn left in 50 meters";
+        } else {
+            return "Turn left now";
+        }
+    }
+
+    private String getDistanceText(double distance) {
+        if (distance >= 1000) {
+            double km = distance / 1000;
+            return String.format("%.2f km", km);
+        } else {
+            return String.format("%.0f m", distance);
+        }
+    }
+
+    public static String getDirectionText(double bearing) {
+        if (bearing < 0 || bearing >= 360) {
+            return "Invalid bearing";
+        }
+
+        if (bearing < 22.5 || bearing >= 337.5) {
+            return "North";
+        } else if (bearing < 67.5) {
+            return "Northeast";
+        } else if (bearing < 112.5) {
+            return "East";
+        } else if (bearing < 157.5) { // Added missing decimal point
+            return "Southeast";
+        } else if (bearing < 202.5) {
+            return "South";
+        } else if (bearing < 247.5) {
+            return "Southwest";
+        } else if (bearing < 292.5) {
+            return "West";
+        } else {
+            return "Northwest";
+        }
+    }
+
+
+
+    private void notifyUser(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+
+    public double getDistance(GeoPoint start, GeoPoint end) {
+        double lat1 = start.getLatitude();
+        double lon1 = start.getLongitude();
+        double lat2 = end.getLatitude();
+        double lon2 = end.getLongitude();
+        int R = 6371; // Radius of the earth in km
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+        return distance;
+    }
+
+
+
+
+
+
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
+        locationOverlay.enableMyLocation();  // enable location updates
+    }
+
+
 
 
 
@@ -558,35 +734,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Request location updates
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-        } else {
-            // Request location permission
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        // Remove location updates
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-    }
-
-
-
-
-
-
-
-
-
-    @Override
     protected void onPause() {
 
         // hide the keyboard in order to avoid getTextBeforeCursor on inactive InputConnection
@@ -594,31 +741,9 @@ public class MainActivity extends AppCompatActivity {
 
         inputMethodManager.hideSoftInputFromWindow(startEditText.getWindowToken(), 0);
         inputMethodManager.hideSoftInputFromWindow(endEditText.getWindowToken(), 0);
+        locationOverlay.disableMyLocation();  // disable location updates
 
         super.onPause();
     }
-
-    private void requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // permission was granted, do your location-related task
-                // for example, start getting the user's location
-            } else {
-                // permission denied, show a message to the user and disable location functionality
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
-
-            }
-        }
-    }
-
 
 }
