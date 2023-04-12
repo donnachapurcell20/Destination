@@ -21,23 +21,27 @@ import java.util.List;
 
 public class DirectionFinder
 {
+    //Declare variables
     private static final String DIRECTION_URL_API = "https://maps.googleapis.com/maps/api/directions/json?";
     private static final String GOOGLE_API_KEY = "AIzaSyDnwLF2-WfK8cVZt9OoDYJ9Y8kspXhEHfI";
     private DirectionFinderListener listener;
     private String origin;
     private String destination;
 
+    //Constructor used to initialise DirectionFinder objects listener, origin, and destination
     public DirectionFinder(DirectionFinderListener listener, String origin, String destination) {
         this.listener = listener;
         this.origin = origin;
         this.destination = destination;
     }
 
+    //Method is entry point for starting the direction finding process and downloads the data it needs
     public void execute() throws UnsupportedEncodingException {
         listener.onDirectionFinderStart();
         new DownloadRawData().execute(createUrl());
     }
 
+    //Method generates URL to download direction from the origin to destination locations
     private String createUrl() throws UnsupportedEncodingException {
         String urlOrigin = URLEncoder.encode(origin, "utf-8");
         String urlDestination = URLEncoder.encode(destination, "utf-8");
@@ -45,8 +49,10 @@ public class DirectionFinder
         return DIRECTION_URL_API + "origin=" + urlOrigin + "&destination=" + urlDestination + "&key=" + GOOGLE_API_KEY;
     }
 
+    //private class named DownloadRawData that extends AsyncTask
     private class DownloadRawData extends AsyncTask<String, Void, String> {
 
+        //Override method named doInbackground sued to download data from URL
         @Override
         protected String doInBackground(String... params) {
             String link = params[0];
@@ -71,6 +77,7 @@ public class DirectionFinder
             return null;
         }
 
+        //Override method tires to parse result from AsyncTask as JSON data
         @Override
         protected void onPostExecute(String res) {
             try {
@@ -81,6 +88,11 @@ public class DirectionFinder
         }
     }
 
+
+    //Method retrieves an array of route from jsonData object
+    //loops through each route creating new route object for each one
+    //Method responsible for parse JSON data returned from direction API
+    //converting them into a list of route objects
     private void parseJSon(String data) throws JSONException {
         if (data == null)
             return;
@@ -114,6 +126,8 @@ public class DirectionFinder
         listener.onDirectionFinderSuccess(routes);
     }
 
+    //Private method named decodePolyLine
+    //decodes the polyline string returned by directionsAPI into LatLng object can be displayed on the map as directions.
     private List<LatLng> decodePolyLine(final String poly) {
         int len = poly.length();
         int index = 0;
