@@ -1,8 +1,11 @@
 package com.example.destination;
 
 
-import static android.content.ContentValues.TAG;
+import com.google.firebase.database.DatabaseReference;
 
+import android.os.Handler;
+
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,13 +17,9 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-//import android.location.LocationRequest;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -29,110 +28,54 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.destination.routing.OSRMRoadManager;
 import com.example.destination.routing.Road;
 import com.example.destination.routing.RoadManager;
 import com.example.destination.routing.RoadNode;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.Nullable;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.mapsforge.BuildConfig;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.android.gms.location.LocationRequest;
-
-
-import org.osmdroid.views.overlay.Marker;
-
-import android.Manifest;
-
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
-    FirebaseDatabase firebaseDatabase;
-    FirebaseFirestore firebaseFirestore;
-    private Spinner categorySpinner;
-    private EditText longitudeme, latitudeme;
-
-    private DatabaseReference mDatabase;
+    //Declare variables
     private MapView mapView;
     private EditText startEditText;
     private EditText endEditText;
-    private Drawable nodeIcon;
-    private Button submitButton;
+
     private Marker marker;
-    private AlertDialog alertDialog;
-    private EditText categoryEditText;
-    private EditText latitudeEditText;
-    private EditText longitudeEditText;
     private LinearLayout searchPanel;
     private ImageButton imageButton;
-    MotionEvent downEvent = null;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private List<GeoPoint> waypoints;
-    private LocationManager locationManager;
-    private Location lastLocation;
-    private Polyline roadOverlay;
-    private int[] distances = {500, 400, 300, 200, 100, 50};
-    private int currentDistanceIndex = 0;
-    private boolean isDirectionNotified = false;
+
+
     // Define a global variable for the user's location
     private Location userLocation;
 
@@ -140,24 +83,48 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     MyLocationNewOverlay locationOverlay;
     GpsMyLocationProvider provider;
     // declare nextPoint as a member variable
-    private GeoPoint nextPoint;
-    private TextView countdownTextBox;
+    private Marker userMarker;
 
-
-
+    // Declare databaseRef as a class-level variable
+    private DatabaseReference databaseRef;
+    private DatabaseReference databaseReference;
+    private List<Location> speedVanLocations;
+    private boolean isDialogShowing;
+    private MyLocationNewOverlay myLocationOverlay;
+    private Marker currentLocationMarker;
+    private MapController mapController;
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 123;
+    private MyLocationNewOverlay mMyLocationOverlay;
+    private GpsMyLocationProvider mGpsMyLocationProvider;
+    private Location mLocation;
+    private Marker currentMarker;
+    private LocationManager locationManager;
+    private Location currentLocation;
+    private LocationListener locationListener;
 
 
     private class GeocoderTask extends AsyncTask<String, Void, Road> {
 
+
+        //This code shows a progress dialog with a message  displayed in the dialog ("Searching route...").
         private ProgressDialog progressDialog;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = ProgressDialog.show(MainActivity.this, "", "Searching route...");
+            // Dismiss the progress dialog if it is already showing
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            // Create a new progress dialog
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setMessage("Searching route...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
         }
 
 
+        //used to show a progress dialog to the user while a task is being performed in the background
         @Override
         protected Road doInBackground(String... locations) {
             String startLocation = locations[0];
@@ -235,7 +202,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                             nodeMarker.setIcon(getResources().getDrawable(R.drawable.ic_continue));
                             break;
                     }
-
+                    //This adds markers for each step of a route on a map.
+                    // Sets title of each marker to indicate the step number
+                    // sets the snippet to display the instructions for that step
+                    // and sets the sub-description to show the length and
+                    // duration of the step. Finally, it adds the marker to the map's overlays.
                     nodeMarker.setTitle("Step " + i);
                     nodeMarker.setSnippet(node.mInstructions);
                     nodeMarker.setSubDescription(Road.getLengthDurationText(MainActivity.this, node.mLength, node.mDuration));
@@ -261,22 +232,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Location nextPointLocation = new Location("nextPoint");
-
-        TextView countdownTextBox = findViewById(R.id.countdownTextBox);
-
-
-
-
-
         // set the user agent for OsmDroid
         Configuration.getInstance().setUserAgentValue(BuildConfig.LIBRARY_PACKAGE_NAME);
-
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("locations");
-//
-//        // Create a Firebase database reference
-//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("locations");
 
 
         // Initialize views
@@ -285,42 +242,34 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         endEditText = findViewById(R.id.end_point);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.getController().setZoom(10);
-//            mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
+        mapView.setBuiltInZoomControls(true);
+
+        // Check if location permission is granted, if not, request it
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+        } else {
+            // Permission is already granted, start getting location updates
+            startLocationUpdates();
+        }
 
 
-        // Set the default location to London
-        IMapController mapController = mapView.getController();
-        mapController.setZoom(12.0);
-//            mapView.getController().setZoom(12.0);
-        GeoPoint startPoint = new GeoPoint(53.0996218803593, -7.911131504579704);
-        mapController.setCenter(startPoint);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        databaseRef = database.getReference("destination-e6a01-default-rtdb");
 
-        // Initialize the location provider and overlay
-        provider = new GpsMyLocationProvider(this);
-        provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
-        locationOverlay = new MyLocationNewOverlay(provider, mapView);
-        locationOverlay.enableFollowLocation();
-        mapView.getOverlays().add(locationOverlay);
-
-
-        //Creating a new marker that is to be used by the user
-        marker = new Marker(mapView);
-        marker.setIcon(getResources().getDrawable(R.drawable.ic_marker));
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
         // Find the expand button in your layout
         ImageButton expandButton = findViewById(R.id.image_button);
         searchPanel = findViewById(R.id.search_panel);
 
         // Retrieve data from Firebase Realtime Database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("locations");
         DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
         locationsRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                String name = snapshot.child("Category").getValue(String.class);
                 Double latitudeDouble = snapshot.child("latitude").getValue(Double.class);
                 double latitude = 0.0; // default value
                 if (latitudeDouble != null) {
@@ -509,200 +458,98 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         });
 
-
     }
+
+    private void startLocationUpdates() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                // Update the map with the user's current location
+                GeoPoint currentGeoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                mapView.getController().animateTo(currentGeoPoint);
+                mapView.getController().setZoom(18.0);
+
+                // Add or update the marker for the user's current location
+                if (currentLocationMarker == null) {
+                    currentLocationMarker = new Marker(mapView);
+                    Drawable markerDrawable = getResources().getDrawable(R.drawable.default_location);
+                    currentLocationMarker.setIcon(markerDrawable);
+                    currentLocationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                    mapView.getOverlays().add(currentLocationMarker);
+                }
+                currentLocationMarker.setPosition(currentGeoPoint);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                // Do nothing
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                // Do nothing
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                // Do nothing
+            }
+        };
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted, start getting location updates
+                startLocationUpdates();
+            } else {
+                // Permission is denied
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
 
     @Override
     public void onLocationChanged(Location location) {
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-
-        // Check user's distance from speed van locations at specified distances
-        DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
-        locationsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Location vanLocation = new Location("");
-                    vanLocation.setLatitude((Double) snapshot.child("latitude").getValue());
-                    vanLocation.setLongitude((Double) snapshot.child("longitude").getValue());
-
-                    float distance = location.distanceTo(vanLocation);
-
-                    if (distance <= 450 && distance > 400) {
-                        showDialog("You are 450 meters from a speed van location");
-                    } else if (distance <= 350 && distance > 300) {
-                        showDialog("You are 350 meters from a speed van location");
-                    } else if (distance <= 250 && distance > 200) {
-                        showDialog("You are 250 meters from a speed van location");
-                    } else if (distance <= 150 && distance > 100) {
-                        showDialog("You are 150 meters from a speed van location");
-                    } else if (distance <= 25) {
-                        showDialog("You are 25 meters from a speed van location");
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle error
-            }
-        });
-
-        // Update countdown timer
-        countdownTimer.updateCountdownText(countdownTextBox);
+        // Update the user marker's position
+        GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+        userMarker.setPosition(userLocation);
+        mapView.getController().setCenter(userLocation);
     }
-
-    private void showDialog(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-
-    private void updateCountdownText(String countdownText) { // corrected method signature
-        // Set countdown text in the textbox
-        countdownTextBox.setText(countdownText);
-    }
-
-    private Handler handler = new Handler();
-    private Runnable updateTextRunnable = new Runnable() {
-        @Override
-        public void run() {
-            // Get user's current location from lastLocation
-            GeoPoint userLocation = new GeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude());
-
-            // Calculate distance to next point
-            double distance = userLocation.distanceToAsDouble(nextPoint);
-
-            // Convert distance to text
-            String distanceText = getDistanceText(distance);
-
-            // Calculate direction to next point
-            double bearing = userLocation.bearingTo(nextPoint);
-
-            // Convert bearing to text
-            String directionText = getDirectionText(bearing);
-
-            // Update text view with distance and direction
-            String message = "Turn " + directionText + " in " + distanceText;
-            countdownTextBox.setText(message);
-
-
-
-            // Schedule next update in 1 second
-            if (distance > 50) {
-                handler.postDelayed(this, 1000);
-            } else {
-                countdownTextBox.setText("Turn " + directionText + " now!");
-            }
-        }
-    };
-
-    private String getCountdownText(double distance) {
-        if (distance >= 500) {
-            return "Turn left in 500 meters";
-        } else if (distance >= 400) {
-            return "Turn left in 400 meters";
-        } else if (distance >= 300) {
-            return "Turn left in 300 meters";
-        } else if (distance >= 200) {
-            return "Turn left in 200 meters";
-        } else if (distance >= 100) {
-            return "Turn left in 100 meters";
-        } else if (distance >= 50) {
-            return "Turn left in 50 meters";
-        } else {
-            return "Turn left now";
-        }
-    }
-
-    private String getDistanceText(double distance) {
-        if (distance >= 1000) {
-            double km = distance / 1000;
-            return String.format("%.2f km", km);
-        } else {
-            return String.format("%.0f m", distance);
-        }
-    }
-
-    public static String getDirectionText(double bearing) {
-        if (bearing < 0 || bearing >= 360) {
-            return "Invalid bearing";
-        }
-
-        if (bearing < 22.5 || bearing >= 337.5) {
-            return "North";
-        } else if (bearing < 67.5) {
-            return "Northeast";
-        } else if (bearing < 112.5) {
-            return "East";
-        } else if (bearing < 157.5) { // Added missing decimal point
-            return "Southeast";
-        } else if (bearing < 202.5) {
-            return "South";
-        } else if (bearing < 247.5) {
-            return "Southwest";
-        } else if (bearing < 292.5) {
-            return "West";
-        } else {
-            return "Northwest";
-        }
-    }
-
-
-
-    private void notifyUser(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-
-    public double getDistance(GeoPoint start, GeoPoint end) {
-        double lat1 = start.getLatitude();
-        double lon1 = start.getLongitude();
-        double lat2 = end.getLatitude();
-        double lon2 = end.getLongitude();
-        int R = 6371; // Radius of the earth in km
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
-        return distance;
-    }
-
-
-
-
-
-
-
-
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
-        locationOverlay.enableMyLocation();  // enable location updates
+    public void onProviderEnabled(String provider) {
+        // ...
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        // ...
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // ...
     }
 
 
-
-
-
-
-    private void toggleSearchPanel()
-    {
+    private void toggleSearchPanel() {
         if (searchPanel.getVisibility() == View.VISIBLE) {
             // Hide search panel
             searchPanel.setVisibility(View.GONE);
@@ -733,17 +580,33 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
     }
 
+
     @Override
     protected void onPause() {
 
         // hide the keyboard in order to avoid getTextBeforeCursor on inactive InputConnection
-        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         inputMethodManager.hideSoftInputFromWindow(startEditText.getWindowToken(), 0);
         inputMethodManager.hideSoftInputFromWindow(endEditText.getWindowToken(), 0);
-        locationOverlay.disableMyLocation();  // disable location updates
-
         super.onPause();
+        locationManager.removeUpdates(locationListener);
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+        }
+    }
+
+
 
 }
