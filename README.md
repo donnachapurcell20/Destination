@@ -1,5 +1,4 @@
 # Destination
-Thesis app
 Destination is a route planner app that provides navigation and road safety it was 
 designed for Android devices that provides its users with a comprehensive route planning and navigation service on Irish roads.
 It also includes features such as the locations of speed vans and speed cameras, and allowing user to contribute to road safety. 
