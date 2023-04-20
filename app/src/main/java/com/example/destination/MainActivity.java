@@ -65,7 +65,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public class MainActivity extends AppCompatActivity {
     //Declare variables
     private MapView mapView;
     private EditText startEditText;
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
                 // Center the map on the starting point of the route
                 GeoPoint startPoint = road.mNodes.get(0).mLocation;
-                mapView.getController().setCenter(startPoint);
+//                mapView.getController().setCenter(startPoint);
             } else {
                 // Display an error message to the user
                 Toast.makeText(MainActivity.this, "Unable to calculate route.", Toast.LENGTH_SHORT).show();
@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     MY_PERMISSIONS_REQUEST_LOCATION);
         } else {
             // Permission is already granted, start getting location updates
-            startLocationUpdates();
+//            startLocationUpdates();
         }
 
 
@@ -460,93 +460,93 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     }
 
-    private void startLocationUpdates() {
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                // Update the map with the user's current location
-                GeoPoint currentGeoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                mapView.getController().animateTo(currentGeoPoint);
-                mapView.getController().setZoom(18.0);
-
-                // Add or update the marker for the user's current location
-                if (currentLocationMarker == null) {
-                    currentLocationMarker = new Marker(mapView);
-                    Drawable markerDrawable = getResources().getDrawable(R.drawable.default_location);
-                    currentLocationMarker.setIcon(markerDrawable);
-                    currentLocationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                    mapView.getOverlays().add(currentLocationMarker);
-                }
-                currentLocationMarker.setPosition(currentGeoPoint);
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                // Do nothing
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                // Do nothing
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                // Do nothing
-            }
-        };
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission is granted, start getting location updates
-                startLocationUpdates();
-            } else {
-                // Permission is denied
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        // Update the user marker's position
-        GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-        userMarker.setPosition(userLocation);
-        mapView.getController().setCenter(userLocation);
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        // ...
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        // ...
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        // ...
-    }
+//    private void startLocationUpdates() {
+//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        locationListener = new LocationListener() {
+//            @Override
+//            public void onLocationChanged(Location location) {
+//                // Update the map with the user's current location
+//                GeoPoint currentGeoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+//                mapView.getController().animateTo(currentGeoPoint);
+//                mapView.getController().setZoom(18.0);
+//
+//                // Add or update the marker for the user's current location
+//                if (currentLocationMarker == null) {
+//                    currentLocationMarker = new Marker(mapView);
+//                    Drawable markerDrawable = getResources().getDrawable(R.drawable.default_location);
+//                    currentLocationMarker.setIcon(markerDrawable);
+////                    currentLocationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+//                    mapView.getOverlays().add(currentLocationMarker);
+//                }
+////                currentLocationMarker.setPosition(currentGeoPoint);
+//            }
+//
+//            @Override
+//            public void onStatusChanged(String provider, int status, Bundle extras) {
+//                // Do nothing
+//            }
+//
+//            @Override
+//            public void onProviderEnabled(String provider) {
+//                // Do nothing
+//            }
+//
+//            @Override
+//            public void onProviderDisabled(String provider) {
+//                // Do nothing
+//            }
+//        };
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // Permission is granted, start getting location updates
+//                startLocationUpdates();
+//            } else {
+//                // Permission is denied
+//                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
+//
+//
+//
+//    @Override
+//    public void onLocationChanged(Location location) {
+////        // Update the user marker's position
+////        GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+////        userMarker.setPosition(userLocation);
+//////        mapView.getController().setCenter(userLocation);
+//    }
+//
+//    @Override
+//    public void onProviderEnabled(String provider) {
+//        // ...
+//    }
+//
+//    @Override
+//    public void onProviderDisabled(String provider) {
+//        // ...
+//    }
+//
+//    @Override
+//    public void onStatusChanged(String provider, int status, Bundle extras) {
+//        // ...
+//    }
 
 
     private void toggleSearchPanel() {
@@ -590,22 +590,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         inputMethodManager.hideSoftInputFromWindow(startEditText.getWindowToken(), 0);
         inputMethodManager.hideSoftInputFromWindow(endEditText.getWindowToken(), 0);
         super.onPause();
-        locationManager.removeUpdates(locationListener);
+//        locationManager.removeUpdates(locationListener);
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_LOCATION);
-        }
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+//                == PackageManager.PERMISSION_GRANTED) {
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+//        } else {
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                    MY_PERMISSIONS_REQUEST_LOCATION);
+//        }
+//    }
 
 
 
